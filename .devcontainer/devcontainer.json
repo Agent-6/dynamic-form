@@ -24,7 +24,8 @@
       "extensions": [
         "streetsidesoftware.code-spell-checker",
         "Angular.ng-template",
-        "biomejs.biome"
+        "biomejs.biome",
+        "bradlc.vscode-tailwindcss"
       ]
     }
   },
@@ -33,9 +34,13 @@
   // "remoteUser": "root"
   "remoteUser": "node",
 
+  "appPort": ["4200:4200"],
+
   "portsAttributes": {
     "4200": {
       "label": "angular"
     }
-  }
+  },
+
+  "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"]
 }

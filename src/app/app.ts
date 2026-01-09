@@ -1,11 +1,13 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, signal, ViewEncapsulation } from '@angular/core';
+import { DynamicFormComponent } from './components/dynamic-form/dynamic-form';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  imports: [DynamicFormComponent],
 })
 export class App {
   protected readonly title = signal('dynamic-form');
