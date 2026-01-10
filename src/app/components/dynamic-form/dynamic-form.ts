@@ -16,6 +16,7 @@ import {
   submit,
 } from '@angular/forms/signals';
 import type { FormControlType, IFormControl } from './dynamic-form.model';
+import { SelectComponent } from '../ui/select/select.component';
 
 type ControlByType<T extends readonly FormControlType[]> = Extract<
   IFormControl,
@@ -29,7 +30,7 @@ type ControlValueByType<T extends readonly FormControlType[]> = ControlByType<T>
   templateUrl: './dynamic-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [Field, JsonPipe],
+  imports: [Field, JsonPipe, SelectComponent],
 })
 export class DynamicFormComponent {
   readonly controls = signal<IFormControl[]>([]);
@@ -56,6 +57,11 @@ export class DynamicFormComponent {
     return controls;
   });
   readonly form = form(this.formControls);
+
+  readonly typeOptions = signal([
+    { id: 'text', name: 'Text' },
+    { id: 'number', name: 'Number' },
+  ]);
 
   trackById(_index: number, control: IFormControl) {
     return control.id;
