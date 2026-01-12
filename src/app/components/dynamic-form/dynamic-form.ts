@@ -87,6 +87,9 @@ export class DynamicFormComponent {
         value: '',
         maxLength: 250,
         min: 8,
+        validators: {
+          required: true,
+        }
       },
     ]);
   }

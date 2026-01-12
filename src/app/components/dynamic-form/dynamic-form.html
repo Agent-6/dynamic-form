@@ -17,8 +17,8 @@
               [field]="field.type" />
           </div> -->
 
-          <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <ui-select [label]="'Type'" [field]="field.type" [options]="typeOptions()" />
+          <div class="w-1/4 mb-3">
+            <ui-select [label]="'Type'" [placeholder]="'Test'" [field]="field.type" [options]="typeOptions()" />
           </div>
 
           <div class="w-1/4 mb-3 flex flex-col gap-1">
@@ -49,7 +49,7 @@
           </div>
           }
 
-          <div class="basis-auto h-10 w-10 self-end mb-3 flex justify-items-center items-center">
+          <div class="flex-none h-10 w-10 self-end mb-3 flex justify-items-center items-center">
             <button type="button"
               class="w-full h-full text-gray-200 hover:text-white focus:text-white font-semibold bg-white hover:bg-red-600 focus:bg-red-600 border-2 border-gray-200 rounded-sm"
               (click)="removeField(control.id)">
