@@ -1,19 +1,19 @@
-<ui-form-field [label]="label()">
-  <ui-form-field-label [label]="label()" />
-  <ui-form-field-control>
-    <div
-      class="@container w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:ring-2 data-focus:ring-black"
-      [(ngpSelectValue)]="value" ngpSelect (ngpSelectOpenChange)="open.set($event)">
+<ui-form-field>
+  <div class="w-full" (blur)="touched.set(true)">
+    <div ngpSelect
+      class="w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:ring-2 data-focus:ring-black"
+      [(ngpSelectValue)]="value" (ngpSelectOpenChange)="open.set($event)"
+      [ngpSelectDropdownContainer]="dropdownContainer">
 
       @if (value(); as value) {
-      <span>{{ valueLabel() }}</span>
+      <span class="text-sm">{{ valueLabel() }}</span>
       } @else {
-      <span class="text-gray-600 dark:text-gray-400">{{ placeholder() }}</span>
+      <span class="text-sm text-gray-600 dark:text-gray-400">{{ placeholder() }}</span>
       }
 
       <i [class]="{ 'bi-chevron-up': open(), 'bi-chevron-down': !open() }" class="bi"></i>
       <div
-        class="absolute z-1001 mt-1 max-h-60 overflow-y-auto rounded-sm border border-gray-200 bg-white p-1 shadow-lg outline-hidden dark:border-gray-800 dark:bg-black"
+        class="absolute w-full z-1001 mt-1 max-h-60 overflow-y-auto rounded-sm border-2 p-1 bg-white border-gray-200 shadow-lg outline-hidden"
         *ngpSelectPortal ngpSelectDropdown>
         @for (option of options(); track option.id) {
         <div
@@ -28,5 +28,7 @@
         }
       </div>
     </div>
-  </ui-form-field-control>
+
+    <div #dropdownContainer class="relative"></div>
+  </div>
 </ui-form-field>
