@@ -5,7 +5,8 @@ import {
   NgpSelectOption,
   NgpSelectPortal,
 } from 'ng-primitives/select';
-import { FormFieldComponent, FormFieldControlComponent } from "../form/form-field/form-field.component";
+import { FormFieldComponent } from "../form/form-field/form-field.component";
+import { FormFieldControlBase } from '../form/form-field/form-field-control.component';
 
 @Component({
   selector: 'ui-select',
@@ -15,7 +16,7 @@ import { FormFieldComponent, FormFieldControlComponent } from "../form/form-fiel
   encapsulation: ViewEncapsulation.None,
   imports: [NgpSelect, NgpSelectDropdown, NgpSelectOption, NgpSelectPortal, FormFieldComponent],
 })
-export class SelectComponent extends FormFieldControlComponent<string | undefined> {
+export class SelectComponent extends FormFieldControlBase<string> {
   /** The options for the select. */
   readonly options = input.required<{ id: string; name: string; }[]>();
   
