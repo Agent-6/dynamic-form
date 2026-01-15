@@ -22,15 +22,11 @@
           </div>
 
           <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <label for="fieldName" class="font-medium">Name</label>
-            <input id="fieldName" class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" type="text"
-              [field]="field.name" />
+            <ui-text [label]="'Name'" [placeholder]="'Test'" [field]="field.name" />
           </div>
 
           <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <label for="fieldLabel" class="font-medium">Label</label>
-            <input id="fieldLabel" class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" type="text"
-              [field]="field.label!" />
+            <ui-text [label]="'Label'" [placeholder]="'Test'" [field]="field.label!" />
           </div>
 
           <!-- text or number field types -->

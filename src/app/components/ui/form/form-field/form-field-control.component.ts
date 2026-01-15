@@ -1,22 +1,74 @@
-// import { ChangeDetectionStrategy, Component, ViewEncapsulation } from "@angular/core";
-
-// @Component({
-//   selector: 'ui-form-field-control',
-//   template: `
-//     <ng-content />
-//   `,
-//   changeDetection: ChangeDetectionStrategy.OnPush,
-//   encapsulation: ViewEncapsulation.None,
-// })
-// export class FormFieldControlComponent {}
-
-import { Directive, input, model } from '@angular/core';
+import { Component, inject, Injectable, input, model, OnInit, Signal } from '@angular/core';
 import { DisabledReason, FormValueControl, ValidationError, WithOptionalField } from '@angular/forms/signals';
 
-@Directive({
-  standalone: true,
+export interface FormFieldState<T> {
+  label: Signal<string>;
+  description: Signal<string | undefined>;
+  placeholder: Signal<string | undefined>;
+
+  value: Signal<T>;
+  touched: Signal<boolean>;
+
+  name: Signal<string>;
+  readonly: Signal<boolean>;
+  required: Signal<boolean>;
+  hidden: Signal<boolean>;
+
+  disabled: Signal<boolean>;
+  disabledReasons: Signal<readonly WithOptionalField<DisabledReason>[]>;
+
+  invalid: Signal<boolean>;
+  errors: Signal<readonly  WithOptionalField<ValidationError>[]>;
+}
+
+@Injectable()
+export class FormFieldStateService<T> {
+  state!: FormFieldState<T>;
+  label!: Signal<string>;
+  description!: Signal<string | undefined>;
+  placeholder!: Signal<string | undefined>;
+
+  value!: Signal<T>;
+  touched!: Signal<boolean>;
+
+  name!: Signal<string>;
+  readonly!: Signal<boolean>;
+  required!: Signal<boolean>;
+  hidden!: Signal<boolean>;
+
+  disabled!: Signal<boolean>;
+  disabledReasons!: Signal<readonly WithOptionalField<DisabledReason>[]>;
+
+  invalid!: Signal<boolean>;
+  errors!: Signal<readonly  WithOptionalField<ValidationError>[]>;
+
+  init(state: FormFieldState<T>): void {
+    this.label = state.label;
+    this.description = state.description;
+    this.placeholder = state.placeholder;
+
+    this.value = state.value;
+    this.touched = state.touched;
+
+    this.name = state.name;
+    this.readonly = state.readonly;
+    this.required = state.required;
+    this.hidden = state.hidden;
+
+    this.disabled = state.disabled;
+    this.disabledReasons = state.disabledReasons;
+
+    this.invalid = state.invalid;
+    this.errors = state.errors;
+  }
+}
+
+@Component({
+  template: '',
 })
-export abstract class FormFieldControlBase<T> implements FormValueControl<T | undefined> {
+export class FormFieldControl<T> implements OnInit, FormValueControl<T | undefined> {
+  protected readonly state = inject(FormFieldStateService<T>);
+
   readonly label = input.required<string>();
   readonly description = input<string>();
   readonly placeholder = input<string>();
@@ -34,4 +86,8 @@ export abstract class FormFieldControlBase<T> implements FormValueControl<T | un
 
   readonly invalid = input<boolean>(false);
   readonly errors = input<readonly  WithOptionalField<ValidationError>[]>([]);
+
+  ngOnInit(): void {
+    this.state.init(this);
+  }
 }

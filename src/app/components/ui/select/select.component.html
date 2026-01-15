@@ -1,12 +1,12 @@
 <ui-form-field>
-  <div uiFormFieldControl class="w-full" (blur)="touched.set(true)">
+  <div class="w-full" (blur)="touched.set(true)">
     <div ngpSelect
       class="w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:ring-2 data-focus:ring-black"
       [(ngpSelectValue)]="value" (ngpSelectOpenChange)="open.set($event)"
       [ngpSelectDropdownContainer]="dropdownContainer">
 
       @if (value(); as value) {
-      <span class="text-sm">{{ valueLabel() }}</span>
+      <span class="text-sm">{{ selectedOptionLabel() }}</span>
       } @else {
       <span class="text-sm text-gray-600 dark:text-gray-400">{{ placeholder() }}</span>
       }

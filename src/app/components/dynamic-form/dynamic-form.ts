@@ -17,6 +17,8 @@ import {
 } from '@angular/forms/signals';
 import type { FormControlType, IFormControl } from './dynamic-form.model';
 import { SelectComponent } from '../ui/select/select.component';
+import { TextComponent } from "../ui/text/text.component";
+import { NumberComponent } from "../ui/number/number.component";
 
 type ControlByType<T extends readonly FormControlType[]> = Extract<
   IFormControl,
@@ -30,7 +32,7 @@ type ControlValueByType<T extends readonly FormControlType[]> = ControlByType<T>
   templateUrl: './dynamic-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [Field, JsonPipe, SelectComponent],
+  imports: [Field, JsonPipe, SelectComponent, TextComponent, NumberComponent],
 })
 export class DynamicFormComponent {
   readonly controls = signal<IFormControl[]>([]);
@@ -117,7 +119,9 @@ export class DynamicFormComponent {
   submit() {
     submit(this.form, async (form) => {
       const result = form().valid();
-      console.log('submitting form with validity', result);
+      const value = form().value();
+      console.log('submitting form with validity:', result);
+      console.log('form value:', value);
 
       return undefined;
     });

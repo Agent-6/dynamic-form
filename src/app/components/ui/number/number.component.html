@@ -1,0 +1,4 @@
+<ui-form-field>
+  <input class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" [id]="name()" type="number" [value]="value()"
+    (input)="value.set($any($event.target.value))" [placeholder]="placeholder() || ''" (blur)="touched.set(true)" />
+</ui-form-field>
