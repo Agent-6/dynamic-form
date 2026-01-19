@@ -9,7 +9,8 @@ import { FormFieldStateService } from './form-field-control.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   template: `
-    @if (!state.hidden()) {
+    @let state = stateService.state();
+    @if (state && !state.hidden()) {
       <div ngpFormField class="w-full flex flex-col gap-1">
         <!-- Label -->
         <label
@@ -37,17 +38,17 @@ import { FormFieldStateService } from './form-field-control.component';
         <ng-content />
 
         <!-- Errors -->
-        @if (state.invalid()) {
-          @for (error of state.errors(); track $index) {
-            <span class="text-sm text-red-500">
-              {{ error.message }}
-            </span>
-          }
+        @if (state.invalid() && state.touched()) {
+          <div class="text-sm text-red-500">
+            @for (error of state.errors(); track $index) {
+              <span class="inline-block">{{ error.message }}</span>
+            }
+          </div>
         }
       </div>
     }
   `,
 })
 export class FormFieldComponent {
-  protected readonly state = inject(FormFieldStateService);
+  protected readonly stateService = inject(FormFieldStateService);
 }
