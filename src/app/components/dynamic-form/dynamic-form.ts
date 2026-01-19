@@ -2,18 +2,23 @@ import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   linkedSignal,
   signal,
   ViewEncapsulation,
 } from '@angular/core';
 import {
   applyEach,
+  applyWhen,
+  disabled,
   Field,
   type FieldTree,
   form,
   type MaybeFieldTree,
   required,
+  schema,
   submit,
+  validate,
 } from '@angular/forms/signals';
 import type { FormControlType, IFormControl } from './dynamic-form.model';
 import { SelectComponent } from '../ui/select/select.component';
@@ -47,15 +52,16 @@ export class DynamicFormComponent {
   readonly controls = signal<IFormControl[]>([]);
   readonly controlsForm = form(this.controls, (form) => {
     applyEach(form, (control) => {
-      required(control.type);
-      required(control.name);
-      // biome-ignore lint/suspicious/noShadowRestrictedNames: angular function
-      // validate(control.name, ({ value, valueOf }) => {
-      //   const name = value();
-      //   const names = valueOf(form).map((c) => c.name);
+      required(control.type, { message: 'field is required' });
+      required(control.name, { message: 'field is required' });
+      validate(control.name, ({ valueOf }) => {
+        const field = valueOf(control);
+        if (!field.name) return null;
 
-      //   if (names.includes(name)) return new StandardSchemaValidationError({ path: control.name });
-      // });
+        const fields = valueOf(form);
+        const match = fields.find(f => f.name === field.name && f.id !== field.id);
+        return match ? { kind: 'NotUnique', message: 'Duplicate name' } : null;
+      });
     });
   });
 
@@ -67,7 +73,34 @@ export class DynamicFormComponent {
 
     return controls;
   });
-  readonly form = form(this.formControls);
+
+  validators(key: string) {
+    return computed(() => {
+      return this.controls().find(c => c.name === key)?.validators;
+    })
+  }
+
+  readonly controlSchema = schema((control) => {
+    applyWhen(control, ({ fieldTree }) => { 
+      const key = fieldTree().keyInParent().toString();
+      const validators = this.validators(key);
+
+      console.log("required", { key: key, control: validators()?.required });
+      return !!validators()?.required;
+    }, (path) => required(path, { message: 'field is required' }));
+
+    disabled(control, ({ fieldTree }) => { 
+      const key = fieldTree().keyInParent();
+      const control = this.controls().find(c => c.name === key);
+
+      console.log("disabled", { key: key, control: control?.validators?.disabled });
+      return control?.validators?.disabled ? 'field is disabled' : false;
+    });
+  });
+
+  readonly form = form(this.formControls, (schema) => {
+    applyEach(schema, this.controlSchema);
+  });
 
   readonly typeOptions = signal([
     { id: 'text', name: 'Text' },
@@ -100,6 +133,7 @@ export class DynamicFormComponent {
         min: 8,
         validators: {
           required: true,
+          disabled: true,
         }
       },
     ]);

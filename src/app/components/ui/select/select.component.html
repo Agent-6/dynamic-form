@@ -1,7 +1,7 @@
 <ui-form-field>
   <div class="w-full" (blur)="touched.set(true)">
     <div ngpSelect
-      class="w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:ring-2 data-focus:ring-black"
+      class="w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:border-black"
       [(ngpSelectValue)]="value" (ngpSelectOpenChange)="open.set($event)"
       [ngpSelectDropdownContainer]="dropdownContainer">
 
