@@ -8,46 +8,32 @@
 
         @if (field) {
         <div class="flex gap-1">
-          <!-- <div class="basis-auto h-10 mb-3 self-end flex justify-items-center items-center">
-                <i class="text-xl bi bi-grip-vertical"></i>
-              </div> -->
-          <!-- <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <label for="fieldType" class="font-medium">Type</label>
-            <input id="fieldType" class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" type="text"
-              [field]="field.type" />
-          </div> -->
-
           <div class="w-1/4 mb-3">
             <ui-select [label]="'Type'" [placeholder]="'Test'" [field]="field.type" [options]="typeOptions()" />
           </div>
 
-          <div class="w-1/4 mb-3 flex flex-col gap-1">
+          <div class="w-1/4 mb-3">
             <ui-text [label]="'Name'" [placeholder]="'Test'" [field]="field.name" />
           </div>
 
-          <div class="w-1/4 mb-3 flex flex-col gap-1">
+          <div class="w-1/4 mb-3">
             <ui-text [label]="'Label'" [placeholder]="'Test'" [field]="field.label!" />
           </div>
 
-          <!-- text or number field types -->
-          @if (castValueToTypes(['text', 'number'], field); as valueField) {
-          <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <label for="fieldValue" class="font-medium">Value</label>
-            <input id="fieldValue" class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" [type]="control.type"
-              [field]="valueField" />
+          <div class="w-1/4 mb-3">
+            <!-- text or number field types -->
+            @if (castControlToType('text', field); as textField) {
+            <ui-text [label]="'Value'" [placeholder]="'Enter a default value'" [field]="textField"></ui-text>
+            }
+            @if (castControlToType('number', field); as numberField) {
+            <ui-number [label]="'Value'" [placeholder]="'Enter a default value'" [field]="numberField"></ui-number>
+            }
           </div>
-          }
-          <!-- field value placeholder -->
-          @else {
-          <div class="w-1/4 mb-3 flex flex-col gap-1">
-            <label for="fieldValue" class="font-medium">Value</label>
-            <input id="fieldValue" class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" disabled />
-          </div>
-          }
 
-          <div class="flex-none h-10 w-10 self-end mb-3 flex justify-items-center items-center">
+          <div class="flex-none w-10 mb-3 flex flex-col gap-1">
+            <div class="w-full h-5"></div>
             <button type="button"
-              class="w-full h-full text-gray-200 hover:text-white focus:text-white font-semibold bg-white hover:bg-red-600 focus:bg-red-600 border-2 border-gray-200 rounded-sm"
+              class="w-full h-10 text-gray-200 hover:text-white focus:text-white font-semibold bg-white hover:bg-red-600 focus:bg-red-600 border-2 border-gray-200 rounded-sm"
               (click)="removeField(control.id)">
               <i class="text-lg bi bi-trash3-fill"></i>
             </button>
@@ -75,16 +61,16 @@
       <form class="w-full">
         <h2 class="text-gray-950 text-xl font-extrabold mb-3">Generated Dynamic Form</h2>
         @for (control of controls(); track control.id) {
-        <div class="flex">
-          <div class="mb-3 min-w-80 w-full flex flex-col gap-1">
-            @if (control.type === 'text' || control.type === 'number') {
-            <label class="font-medium">
-              <span [class.text-gray-300]="!control.label">{{ control.label || 'Enter a label for this field' }}</span>
-            </label>
-            <input class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" [type]="control.type"
-              [field]="getField(control)" />
-            }
-          </div>
+        <div class="w-full mb-3">
+          <!-- text or number field types -->
+          @if (control.type === 'text') {
+          <ui-text [label]="control.label || 'Enter a label for this field'" [placeholder]="control.placeholder"
+            [field]="getField(control)"></ui-text>
+          }
+          @if (control.type === 'number') {
+          <ui-number [label]="control.label || 'Enter a label for this field'" [placeholder]="control.placeholder"
+            [field]="getField(control)"></ui-number>
+          }
         </div>
         }
 

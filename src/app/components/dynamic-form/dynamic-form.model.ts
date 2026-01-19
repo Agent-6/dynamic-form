@@ -67,10 +67,11 @@ export type BasicControlTypes = Extract<FormControlType, 'text' | 'number'>;
 export type BasicControlValueType<T extends BasicControlTypes> = T extends 'number'
   ? number
   : string;
+
 export interface BasicControl<T extends BasicControlTypes = BasicControlTypes>
   extends DynamicFormControl<T> {
   value: BasicControlValueType<T>;
-  options?: never;
+  options?: never; // options are not applicable to this control type
 }
 
 export interface SelectControl extends DynamicFormControl<'select'> {
@@ -78,4 +79,4 @@ export interface SelectControl extends DynamicFormControl<'select'> {
   options: { id: string; name: string }[]; // for select, radio, chips
 }
 
-export type IFormControl = BasicControl | SelectControl;
+export type IFormControl = BasicControl<'text'> | BasicControl<'number'> | SelectControl;

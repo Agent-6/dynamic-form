@@ -20,12 +20,21 @@ import { SelectComponent } from '../ui/select/select.component';
 import { TextComponent } from "../ui/text/text.component";
 import { NumberComponent } from "../ui/number/number.component";
 
-type ControlByType<T extends readonly FormControlType[]> = Extract<
+export type ControlByType<T extends FormControlType> = Extract<
+  IFormControl,
+  { type: T }
+>;
+
+export type ControlValueByType<T extends FormControlType> = 
+  ControlByType<T>['value'];
+
+export type ControlsByTypes<T extends readonly FormControlType[]> = Extract<
   IFormControl,
   { type: T[number] }
 >;
 
-type ControlValueByType<T extends readonly FormControlType[]> = ControlByType<T>['value'];
+export type ControlValuesByTypes<T extends readonly FormControlType[]> = 
+  ControlsByTypes<T>['value'];
 
 @Component({
   selector: 'app-dynamic-form',
@@ -100,11 +109,11 @@ export class DynamicFormComponent {
     this.controls.update((controls) => controls.filter((c) => c.id !== id));
   }
 
-  castValueToTypes<T extends readonly FormControlType[]>(
-    expectedTypes: T,
+  castControlToType<T extends FormControlType>(
+    expectedType: T,
     control: MaybeFieldTree<IFormControl, number>,
   ): FieldTree<ControlValueByType<T>, string> | null {
-    if (expectedTypes.includes(control.type().value() as T[number])) {
+    if (expectedType === control.type().value()) {
       return control.value as unknown as FieldTree<ControlValueByType<T>, string>;
     }
     return null;
