@@ -1,5 +1,19 @@
-import { Component, inject, Injectable, input, model, OnInit, signal, Signal } from '@angular/core';
-import { DisabledReason, FormValueControl, ValidationError, WithOptionalField } from '@angular/forms/signals';
+import {
+  Component,
+  Injectable,
+  inject,
+  input,
+  model,
+  type OnInit,
+  type Signal,
+  signal,
+} from '@angular/core';
+import type {
+  DisabledReason,
+  FormValueControl,
+  ValidationError,
+  WithOptionalField,
+} from '@angular/forms/signals';
 
 export interface FormFieldState<T> {
   label: Signal<string>;
@@ -18,7 +32,7 @@ export interface FormFieldState<T> {
   disabledReasons: Signal<readonly WithOptionalField<DisabledReason>[]>;
 
   invalid: Signal<boolean>;
-  errors: Signal<readonly  WithOptionalField<ValidationError>[]>;
+  errors: Signal<readonly WithOptionalField<ValidationError>[]>;
 }
 
 @Injectable()
@@ -53,7 +67,7 @@ export class FormFieldControl<T> implements OnInit, FormValueControl<T | undefin
   readonly disabledReasons = input<readonly WithOptionalField<DisabledReason>[]>([]);
 
   readonly invalid = input<boolean>(false);
-  readonly errors = input<readonly  WithOptionalField<ValidationError>[]>([]);
+  readonly errors = input<readonly WithOptionalField<ValidationError>[]>([]);
 
   ngOnInit(): void {
     this.stateService.init(this);
