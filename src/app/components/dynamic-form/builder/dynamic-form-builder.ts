@@ -2,25 +2,26 @@ import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  linkedSignal,
   model,
   signal,
   ViewEncapsulation,
 } from '@angular/core';
 import {
   applyEach,
+  disabled,
   Field,
   type FieldTree,
   form,
   type MaybeFieldTree,
   required,
+  submit,
   validate,
 } from '@angular/forms/signals';
 import type { FormControlType, IFormControl } from '../../dynamic-form/dynamic-form.model';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import { TextComponent } from '../../ui/text/text.component';
-import type { ControlValueByType } from '../dynamic-form.model';
+import { ControlValueByType } from '../type-utils';
 
 @Component({
   selector: 'app-dynamic-form-builder',
@@ -44,16 +45,14 @@ export class DynamicFormBuilderComponent {
         const match = fields.find((f) => f.name === field.name && f.id !== field.id);
         return match ? { kind: 'NotUnique', message: 'Duplicate name' } : null;
       });
+
+      if (control.validators) {
+        disabled(control.validators, ({ stateOf }) => {
+          const nameState = stateOf(control.name);
+          return !nameState.valid() ? 'name is required' : false;
+        });
+      }
     });
-  });
-
-  readonly controlFieldById = linkedSignal(() => {
-    const map = new Map<string, MaybeFieldTree<IFormControl, number>>();
-    for (const control of this.controlsForm) {
-      map.set(control.id().value(), control);
-    }
-
-    return map;
   });
 
   readonly typeOptions = signal([
@@ -62,7 +61,8 @@ export class DynamicFormBuilderComponent {
   ]);
 
   addField() {
-    this.controls.update((controls) => [
+    submit(this.controlsForm, async () => {
+      this.controls.update((controls) => [
       ...controls,
       {
         id: crypto.randomUUID(),
@@ -77,6 +77,15 @@ export class DynamicFormBuilderComponent {
         },
       },
     ]);
+
+      // TODO: call server
+      return null;
+    });
+  }
+
+  configField(id: string) {
+    // const control = this.controls().find((c) => c.id === id);
+    // const controls = this.controls.update((controls) => controls.filter(c));
   }
 
   removeField(id: string) {

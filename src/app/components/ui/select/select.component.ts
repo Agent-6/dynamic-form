@@ -7,6 +7,7 @@ import {
 } from 'ng-primitives/select';
 import { FormFieldComponent } from "../form/form-field/form-field.component";
 import { FormFieldControl, FormFieldStateService } from '../form/form-field/form-field-control.component';
+import { SelectControl, SelectControlOption } from '../../dynamic-form/dynamic-form.model';
 
 @Component({
   selector: 'ui-select',
@@ -16,14 +17,36 @@ import { FormFieldControl, FormFieldStateService } from '../form/form-field/form
   imports: [NgpSelect, NgpSelectDropdown, NgpSelectOption, NgpSelectPortal, FormFieldComponent],
   providers: [FormFieldStateService],
 })
-export class SelectComponent extends FormFieldControl<string> {
+export class SelectComponent extends FormFieldControl<SelectControl['value']> {
   /** The options for the select. */
-  readonly options = input.required<{ id: string; name: string; }[]>();
-  
+  readonly options = input.required<SelectControlOption[]>();
+  readonly variant = input<SelectControl['variant']>('id');
+
   protected readonly open = signal<boolean>(false);
+  
   protected readonly selectedOptionLabel = computed(() => {
-    const id = this.value();
-    const option = this.options().find(o => o.id === id);
-    return option?.name;
+    switch(this.variant()) {
+      case 'multi':
+        const values = this.value() as SelectControlOption[];
+        return values?.map(v => v.name)?.join(' ,');
+      case 'option':
+        const value = this.value() as SelectControlOption;
+        return value?.name;
+      case 'id':
+        const id = this.value() as string;
+        return this.options().find(o => o.id === id)?.name;
+    }
   });
+
+  getOptionValue(option: SelectControlOption) {
+    switch(this.variant()) {
+      case 'multi':
+        const values = this.value() as SelectControlOption[];
+        return [ ...values?.filter(v => v.id !== option.id), option];
+      case 'option':
+        return option;
+      case 'id':
+        return option.id;
+    }
+  }
 }

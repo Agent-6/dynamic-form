@@ -2,15 +2,20 @@
   <form class="w-full">
     <h2 class="text-gray-950 text-xl font-extrabold mb-3">Generated Dynamic Form</h2>
     @for (control of controls(); track control.id) {
+    @let label = control.label || 'Enter a label for this field';
+    @let placeholder = control.placeholder;
+
     <div class="w-full mb-3">
       <!-- text or number field types -->
       @if (control.type === 'text') {
-      <ui-text [label]="control.label || 'Enter a label for this field'" [placeholder]="control.placeholder"
-        [field]="getField(control)"></ui-text>
+      <ui-text [label]="label" [placeholder]="placeholder" [field]="getField(control)"></ui-text>
       }
       @if (control.type === 'number') {
-      <ui-number [label]="control.label || 'Enter a label for this field'" [placeholder]="control.placeholder"
-        [field]="getField(control)"></ui-number>
+      <ui-number [label]="label" [placeholder]="placeholder" [field]="getField(control)"></ui-number>
+      }
+      @if (control.type === 'select') {
+      <ui-select [label]="label" [placeholder]="placeholder" [field]="getField(control)"
+        [options]="control.options"></ui-select>
       }
     </div>
     }
@@ -23,5 +28,5 @@
   </form>
 
   <pre
-    class="w-full h-full rounded-sm bg-gray-950 text-white p-2 text-sm font-mono overflow-auto max-h-96">{{ formControls() | json }}</pre>
+    class="w-full h-full rounded-sm bg-gray-950 text-white p-2 text-sm font-mono overflow-auto max-h-96">{{ formState() | json }}</pre>
 </div>

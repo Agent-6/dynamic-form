@@ -58,6 +58,7 @@ export interface DynamicFormControl<T extends FormControlType> {
   type: T;
   name: string;
   label?: string;
+  description?: string;
   placeholder?: string;
   hidden?: boolean;
   validators?: ValidatorsForType<T>;
@@ -72,23 +73,15 @@ export interface BasicControl<T extends BasicControlTypes = BasicControlTypes>
   extends DynamicFormControl<T> {
   value: BasicControlValueType<T>;
   options?: never; // options are not applicable to this control type
+  variant?: never;
 }
 
+export interface SelectControlOption { id: string; name: string }
 export interface SelectControl extends DynamicFormControl<'select'> {
-  value: { id: string; name: string }[];
-  options: { id: string; name: string }[]; // for select, radio, chips
+  value: string | SelectControlOption | SelectControlOption[];
+  options: SelectControlOption[]; // for select, radio, chips
+  variant: 'id' | 'option' | 'multi';
 }
 
 export type IFormControl = BasicControl<'text'> | BasicControl<'number'> | SelectControl;
 
-export type ControlByType<T extends FormControlType> = Extract<IFormControl, { type: T }>;
-
-export type ControlValueByType<T extends FormControlType> = ControlByType<T>['value'];
-
-export type ControlsByTypes<T extends readonly FormControlType[]> = Extract<
-  IFormControl,
-  { type: T[number] }
->;
-
-export type ControlValuesByTypes<T extends readonly FormControlType[]> =
-  ControlsByTypes<T>['value'];

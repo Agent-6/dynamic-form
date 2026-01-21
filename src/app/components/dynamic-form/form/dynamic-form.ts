@@ -13,9 +13,9 @@ import {
   Field,
   type FieldTree,
   form,
+  LogicFn,
   readonly,
   required,
-  type SchemaPath,
   schema,
   submit,
 } from '@angular/forms/signals';
@@ -23,6 +23,7 @@ import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import { TextComponent } from '../../ui/text/text.component';
 import type { IFormControl } from '../dynamic-form.model';
+import { tryCastControlToType } from '../type-utils';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -34,8 +35,9 @@ import type { IFormControl } from '../dynamic-form.model';
 export class DynamicFormComponent {
   readonly controls = input.required<IFormControl[]>();
 
+  tryCastControlToType = tryCastControlToType;
+
   readonly validatorsMap = computed(() => {
-    console.log('updated');
     const map: { [key: IFormControl['name']]: IFormControl['validators'] } = {};
     for (const control of this.controls()) {
       map[control.name] = control.validators;
@@ -44,37 +46,26 @@ export class DynamicFormComponent {
     return map;
   });
 
-  readonly controlSchema = schema<IFormControl['value']>(
-    (control: SchemaPath<IFormControl['value']>) => {
-      required(control, {
-        when: ({ fieldTree }) => {
-          const key = fieldTree().keyInParent().toString();
-          const validators = this.validatorsMap()[key];
+  getValidator<T>(selector: (validators: IFormControl['validators']) => T): LogicFn<IFormControl['value'], T> {
+    return ({ fieldTree }) => {
+      const key = fieldTree().keyInParent() as string;
+      const validators = this.validatorsMap()[key];
 
-          console.log('required', { key: key, control: validators?.required });
-          return !!validators?.required;
-        },
-      });
+      return selector(validators);
+    }
+  }
 
-      disabled(control, ({ fieldTree }) => {
-        const key = fieldTree().keyInParent().toString();
-        const validators = this.validatorsMap()[key];
+  private readonly controlSchema = schema<IFormControl['value']>((control) => {
+    required(control, {
+      message: 'filed is required',
+      when: this.getValidator((validators) => !!validators?.required)
+    });
 
-        console.log('disabled', { key: key, control: validators?.disabled });
-        return validators?.disabled ? 'field is disabled' : false;
-      });
+    disabled(control, this.getValidator((validators) => validators?.disabled ? 'field is disabled' : false));
+    readonly(control, this.getValidator((validators) => !!validators?.readonly));
+  });
 
-      readonly(control, ({ fieldTree }) => {
-        const key = fieldTree().keyInParent().toString();
-        const validators = this.validatorsMap()[key];
-
-        console.log('disabled', { key: key, control: validators?.disabled });
-        return !!validators?.readonly;
-      });
-    },
-  );
-
-  readonly formControls = linkedSignal<{ [key: string]: IFormControl['value'] }>(() => {
+  readonly formState = linkedSignal<{ [key: string]: IFormControl['value'] }>(() => {
     const controls: { [key: IFormControl['name']]: IFormControl['value'] } = {};
     for (const control of this.controls()) {
       controls[control.name] = control.value;
@@ -83,7 +74,7 @@ export class DynamicFormComponent {
     return controls;
   });
 
-  readonly form = form(this.formControls, (schema) => {
+  readonly form = form(this.formState, (schema) => {
     applyEach(schema, this.controlSchema);
   });
 

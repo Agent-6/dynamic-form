@@ -16,7 +16,7 @@ import type {
 } from '@angular/forms/signals';
 
 export interface FormFieldState<T> {
-  label: Signal<string>;
+  label: Signal<string | undefined>;
   description: Signal<string | undefined>;
   placeholder: Signal<string | undefined>;
 
@@ -51,7 +51,7 @@ export class FormFieldStateService<T> {
 export class FormFieldControl<T> implements OnInit, FormValueControl<T | undefined> {
   protected readonly stateService = inject(FormFieldStateService<T>);
 
-  readonly label = input.required<string>();
+  readonly label = input<string>();
   readonly description = input<string>();
   readonly placeholder = input<string>();
 
