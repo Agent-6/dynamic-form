@@ -3,7 +3,8 @@
     <div ngpSelect
       class="w-full flex h-10 items-center justify-between rounded-sm border-2 p-2 border-gray-200 data-focus:border-black"
       [(ngpSelectValue)]="value" (ngpSelectOpenChange)="open.set($event)"
-      [ngpSelectDropdownContainer]="dropdownContainer">
+      [ngpSelectDropdownContainer]="dropdownContainer" [ngpSelectDisabled]="disabled()"
+      [class.bg-gray-200]="disabled()">
 
       @if (value(); as value) {
       <span class="text-sm">{{ selectedOptionLabel() }}</span>
