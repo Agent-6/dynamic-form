@@ -1,13 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import {
   NgpSelect,
   NgpSelectDropdown,
   NgpSelectOption,
   NgpSelectPortal,
 } from 'ng-primitives/select';
-import { FormFieldComponent } from "../form/form-field/form-field.component";
-import { FormFieldControl, FormFieldStateService } from '../form/form-field/form-field-control.component';
-import { SelectControl, SelectControlOption } from '../../dynamic-form/dynamic-form.model';
+import type { SelectControl, SelectControlOption } from '../../dynamic-form/dynamic-form.model';
+import { FormFieldComponent } from '../form/form-field/form-field.component';
+import {
+  FormFieldControl,
+  FormFieldStateService,
+} from '../form/form-field/form-field-control.component';
 
 @Component({
   selector: 'ui-select',
@@ -23,26 +33,31 @@ export class SelectComponent extends FormFieldControl<SelectControl['value']> {
   readonly variant = input<SelectControl['variant']>('id');
 
   protected readonly open = signal<boolean>(false);
-  
+
   protected readonly selectedOptionLabel = computed(() => {
-    switch(this.variant()) {
-      case 'multi':
+    switch (this.variant()) {
+      case 'multi': {
         const values = this.value() as SelectControlOption[];
-        return values?.map(v => v.name)?.join(' ,');
-      case 'option':
+        return values?.map((v) => v.name)?.join(' ,');
+      }
+      case 'option': {
         const value = this.value() as SelectControlOption;
         return value?.name;
-      case 'id':
+      }
+      case 'id': {
         const id = this.value() as string;
-        return this.options().find(o => o.id === id)?.name;
+        return this.options().find((o) => o.id === id)?.name;
+      }
     }
   });
 
   getOptionValue(option: SelectControlOption) {
-    switch(this.variant()) {
-      case 'multi':
+    switch (this.variant()) {
+      case 'multi': {
         const values = this.value() as SelectControlOption[];
-        return [ ...values?.filter(v => v.id !== option.id), option];
+        const rest = values?.filter((v) => v.id !== option.id) || [];
+        return [...rest, option];
+      }
       case 'option':
         return option;
       case 'id':

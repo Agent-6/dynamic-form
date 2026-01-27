@@ -1,0 +1,96 @@
+<div class="w-full h-full flex flex-col p-4 bg-white rounded-sm shadow overflow-auto">
+
+  <!-- title -->
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-gray-950 text-xl font-extrabold">{{ mode() === 'edit' ? 'Edit Form Field' : 'New Form Field' }}</h2>
+    <button type="button"
+      class="ms-auto p-2 h-10 w-10 text-black font-semibold bg-white hover:bg-gray-50 focus:bg-gray-50 rounded-sm"
+      (click)="show.set(false)">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- content -->
+  <form class="w-full mb-3 flex flex-col">
+    @let fieldControl = control();
+
+    <div class="w-full mb-3">
+      <ui-select [label]="'Type'" [placeholder]="'Test'" [field]="form.type" [options]="typeOptions()"
+        [variant]="'id'" />
+    </div>
+
+    <div class="w-full mb-3">
+      <ui-text [label]="'Name'" [placeholder]="'Test'" [field]="form.name" />
+    </div>
+
+    <div class="w-full mb-3">
+      <ui-text [label]="'Label'" [placeholder]="'Test'" [field]="form.label!" />
+    </div>
+
+    <!-- select options -->
+    @if (fieldControl.type === 'select') {
+    <div class="w-full">
+      <div class="mb-3">
+        <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Options</label>
+      </div>
+
+      @for (option of selectOptionsForm; let index = $index; track index) {
+      <div class="ms-auto text-sm w-full mb-3 flex flex-row gap-x-1">
+        <ui-text [label]="'Id'" [field]="selectOptionsForm[index].id" />
+        <ui-text [label]="'Value'" [field]="selectOptionsForm[index].name" />
+        <button type="button"
+          class="h-10 w-10 flex-none self-end p-2 text-white font-semibold bg-red-600 hover:bg-red-700 focus:bg-red-700 rounded-sm"
+          (click)="removeOption(index)">
+          <i class="bi bi-trash3-fill"></i>
+        </button>
+      </div>
+      }
+
+      <div class="text-sm flex-none flex flex-row gap-x-1">
+        @if (selectOptionsForm().invalid() && selectOptionsForm().touched()) {
+        <div class="text-sm text-red-500">
+          @for (error of selectOptionsForm().errors(); track $index) {
+          <span class="inline-block">{{ error.message }}</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="ms-auto text-sm flex-none flex flex-row gap-x-1">
+        <button type="button"
+          class="flex-none p-2 text-white font-semibold bg-black hover:bg-gray-900 focus:bg-gray-900 rounded-sm"
+          (click)="addOption()">
+          <i class="bi bi-plus-lg"></i> Add Option
+        </button>
+      </div>
+    </div>
+    }
+    <div class="w-full mb-3 flex flex-row gap-1">
+    </div>
+
+    <div class="w-full mb-3">
+      <!-- text, number or select field types -->
+      @if (fieldControl.type === 'text') {
+      <ui-text [label]="'Value'" [placeholder]="'Enter a default value'"
+        [field]="getValueField(fieldControl)"></ui-text>
+      }
+      @if (fieldControl.type === 'number') {
+      <ui-number [label]="'Value'" [placeholder]="'Enter a default value'"
+        [field]="getValueField(fieldControl)"></ui-number>
+      }
+      @if (fieldControl.type === 'select' && fieldControl.options) {
+      <ui-select [label]="'Value'" [placeholder]="'Enter a default value'" [field]="getValueField(fieldControl)"
+        [options]="fieldControl.options" />
+      }
+    </div>
+  </form>
+
+  <!-- actions -->
+  <div class="mt-auto w-full flex">
+    <button type="button"
+      class="ms-auto p-2 text-white font-semibold bg-black hover:bg-gray-900 focus:bg-gray-900 rounded-sm"
+      (click)="submit()">
+      <i class="bi bi-plus-lg"></i> {{ mode() === 'edit' ? 'Update Field' : 'Add Field' }}
+    </button>
+  </div>
+</div>

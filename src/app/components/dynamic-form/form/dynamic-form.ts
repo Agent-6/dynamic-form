@@ -13,7 +13,7 @@ import {
   Field,
   type FieldTree,
   form,
-  LogicFn,
+  type LogicFn,
   readonly,
   required,
   schema,
@@ -23,7 +23,6 @@ import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import { TextComponent } from '../../ui/text/text.component';
 import type { IFormControl } from '../dynamic-form.model';
-import { tryCastControlToType } from '../type-utils';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -35,8 +34,6 @@ import { tryCastControlToType } from '../type-utils';
 export class DynamicFormComponent {
   readonly controls = input.required<IFormControl[]>();
 
-  tryCastControlToType = tryCastControlToType;
-
   readonly validatorsMap = computed(() => {
     const map: { [key: IFormControl['name']]: IFormControl['validators'] } = {};
     for (const control of this.controls()) {
@@ -46,23 +43,31 @@ export class DynamicFormComponent {
     return map;
   });
 
-  getValidator<T>(selector: (validators: IFormControl['validators']) => T): LogicFn<IFormControl['value'], T> {
+  getValidator<T>(
+    selector: (validators: IFormControl['validators']) => T,
+  ): LogicFn<IFormControl['value'], T> {
     return ({ fieldTree }) => {
       const key = fieldTree().keyInParent() as string;
       const validators = this.validatorsMap()[key];
 
       return selector(validators);
-    }
+    };
   }
 
   private readonly controlSchema = schema<IFormControl['value']>((control) => {
     required(control, {
       message: 'filed is required',
-      when: this.getValidator((validators) => !!validators?.required)
+      when: this.getValidator((validators) => !!validators?.required),
     });
 
-    disabled(control, this.getValidator((validators) => validators?.disabled ? 'field is disabled' : false));
-    readonly(control, this.getValidator((validators) => !!validators?.readonly));
+    disabled(
+      control,
+      this.getValidator((validators) => (validators?.disabled ? 'field is disabled' : false)),
+    );
+    readonly(
+      control,
+      this.getValidator((validators) => !!validators?.readonly),
+    );
   });
 
   readonly formState = linkedSignal<{ [key: string]: IFormControl['value'] }>(() => {

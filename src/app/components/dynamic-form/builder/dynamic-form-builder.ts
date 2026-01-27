@@ -2,7 +2,7 @@ import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  model,
+  inject,
   signal,
   ViewEncapsulation,
 } from '@angular/core';
@@ -18,78 +18,42 @@ import {
   validate,
 } from '@angular/forms/signals';
 import type { FormControlType, IFormControl } from '../../dynamic-form/dynamic-form.model';
-import { NumberComponent } from '../../ui/number/number.component';
-import { SelectComponent } from '../../ui/select/select.component';
-import { TextComponent } from '../../ui/text/text.component';
-import { ControlValueByType } from '../type-utils';
+import type { ControlValueByType } from '../type-utils';
+import { DynamicFormFieldComponent } from './dynamic-field-form';
+import { DynamicFormService } from './dynamic-form-builder.service';
 
 @Component({
   selector: 'app-dynamic-form-builder',
   templateUrl: './dynamic-form-builder.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [Field, JsonPipe, SelectComponent, TextComponent, NumberComponent],
+  imports: [JsonPipe, DynamicFormFieldComponent],
 })
 export class DynamicFormBuilderComponent {
-  readonly controls = model<IFormControl[]>([]);
-  readonly controlsForm = form(this.controls, (form) => {
-    applyEach(form, (control) => {
-      required(control.type, { message: 'field is required' });
-      required(control.name, { message: 'field is required' });
-      // biome-ignore lint/suspicious/noShadowRestrictedNames: this is not a global property
-      validate(control.name, ({ valueOf }) => {
-        const field = valueOf(control);
-        if (!field.name) return null;
+  private readonly service = inject(DynamicFormService);
+  protected readonly controls = this.service.controls;
 
-        const fields = valueOf(form);
-        const match = fields.find((f) => f.name === field.name && f.id !== field.id);
-        return match ? { kind: 'NotUnique', message: 'Duplicate name' } : null;
-      });
+  protected readonly show = signal<boolean>(false);
+  protected readonly selectedId = signal<string | undefined>(undefined);
 
-      if (control.validators) {
-        disabled(control.validators, ({ stateOf }) => {
-          const nameState = stateOf(control.name);
-          return !nameState.valid() ? 'name is required' : false;
-        });
-      }
-    });
-  });
-
-  readonly typeOptions = signal([
+  readonly typeOptions = signal<{ id: FormControlType; name: string }[]>([
     { id: 'text', name: 'Text' },
     { id: 'number', name: 'Number' },
+    { id: 'select', name: 'Select' },
   ]);
 
   addField() {
-    submit(this.controlsForm, async () => {
-      this.controls.update((controls) => [
-      ...controls,
-      {
-        id: crypto.randomUUID(),
-        type: 'text',
-        name: '',
-        label: '',
-        value: '',
-        validators: {
-          required: true,
-          disabled: true,
-          readonly: true,
-        },
-      },
-    ]);
-
-      // TODO: call server
-      return null;
-    });
+    this.show.set(true);
+    this.selectedId.set(undefined);
   }
 
   configField(id: string) {
-    // const control = this.controls().find((c) => c.id === id);
-    // const controls = this.controls.update((controls) => controls.filter(c));
+    this.show.set(true);
+    this.selectedId.set(id);
   }
 
   removeField(id: string) {
-    this.controls.update((controls) => controls.filter((c) => c.id !== id));
+    this.service.removeControl(id);
   }
 
   castControlToType<T extends FormControlType>(

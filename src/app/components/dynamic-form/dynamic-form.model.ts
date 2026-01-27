@@ -9,8 +9,8 @@ export type FormControlType =
   | 'tel'
   | 'search'
   | 'date'
-  | 'datetime-local'
   | 'time'
+  | 'datetime'
   | 'month'
   | 'week'
   | 'select'
@@ -76,7 +76,16 @@ export interface BasicControl<T extends BasicControlTypes = BasicControlTypes>
   variant?: never;
 }
 
-export interface SelectControlOption { id: string; name: string }
+export interface SelectControlOption {
+  id: string;
+  name: string;
+}
+export type SelectControlType = 'id' | 'option' | 'multi';
+export type SelectControlValueType<T extends SelectControlType> = T extends 'id'
+  ? string
+  : T extends 'option'
+    ? SelectControlOption
+    : SelectControlOption;
 export interface SelectControl extends DynamicFormControl<'select'> {
   value: string | SelectControlOption | SelectControlOption[];
   options: SelectControlOption[]; // for select, radio, chips
@@ -84,4 +93,3 @@ export interface SelectControl extends DynamicFormControl<'select'> {
 }
 
 export type IFormControl = BasicControl<'text'> | BasicControl<'number'> | SelectControl;
-
