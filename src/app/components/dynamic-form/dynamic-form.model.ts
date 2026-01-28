@@ -72,8 +72,6 @@ export type BasicControlValueType<T extends BasicControlTypes> = T extends 'numb
 export interface BasicControl<T extends BasicControlTypes = BasicControlTypes>
   extends DynamicFormControl<T> {
   value: BasicControlValueType<T>;
-  options?: never; // options are not applicable to this control type
-  variant?: never;
 }
 
 export interface SelectControlOption {

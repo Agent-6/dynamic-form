@@ -28,16 +28,16 @@
     </div>
 
     <!-- select options -->
-    @if (fieldControl.type === 'select') {
+    @if (selectOptionsForm(); as optionsForm) {
     <div class="w-full">
       <div class="mb-3">
         <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Options</label>
       </div>
 
-      @for (option of selectOptionsForm; let index = $index; track index) {
+      @for (option of optionsForm; let index = $index; track index) {
       <div class="ms-auto text-sm w-full mb-3 flex flex-row gap-x-1">
-        <ui-text [label]="'Id'" [formField]="selectOptionsForm[index].id" />
-        <ui-text [label]="'Value'" [formField]="selectOptionsForm[index].name" />
+        <ui-text class="flex-1" [label]="'Id'" [formField]="optionsForm[index].id" />
+        <ui-text class="flex-1" [label]="'Value'" [formField]="optionsForm[index].name" />
         <button type="button"
           class="h-10 w-10 flex-none self-end p-2 text-white font-semibold bg-red-600 hover:bg-red-700 focus:bg-red-700 rounded-sm"
           (click)="removeOption(index)">
@@ -47,9 +47,9 @@
       }
 
       <div class="text-sm flex-none flex flex-row gap-x-1">
-        @if (selectOptionsForm().invalid() && selectOptionsForm().touched()) {
+        @if (optionsForm().invalid() && optionsForm().touched()) {
         <div class="text-sm text-red-500">
-          @for (error of selectOptionsForm().errors(); track $index) {
+          @for (error of optionsForm().errors(); track $index) {
           <span class="inline-block">{{ error.message }}</span>
           }
         </div>
@@ -65,8 +65,6 @@
       </div>
     </div>
     }
-    <div class="w-full mb-3 flex flex-row gap-1">
-    </div>
 
     <div class="w-full mb-3">
       <!-- text, number or select field types -->
