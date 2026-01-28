@@ -10,8 +10,8 @@ import {
 import {
   applyEach,
   disabled,
-  Field,
   type FieldTree,
+  FormField,
   form,
   type LogicFn,
   readonly,
@@ -29,7 +29,7 @@ import type { IFormControl } from '../dynamic-form.model';
   templateUrl: './dynamic-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [Field, JsonPipe, SelectComponent, TextComponent, NumberComponent],
+  imports: [FormField, JsonPipe, SelectComponent, TextComponent, NumberComponent],
 })
 export class DynamicFormComponent {
   readonly controls = input.required<IFormControl[]>();

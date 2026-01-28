@@ -15,16 +15,16 @@
     @let fieldControl = control();
 
     <div class="w-full mb-3">
-      <ui-select [label]="'Type'" [placeholder]="'Test'" [field]="form.type" [options]="typeOptions()"
+      <ui-select [label]="'Type'" [placeholder]="'Test'" [formField]="form.type" [options]="typeOptions()"
         [variant]="'id'" />
     </div>
 
     <div class="w-full mb-3">
-      <ui-text [label]="'Name'" [placeholder]="'Test'" [field]="form.name" />
+      <ui-text [label]="'Name'" [placeholder]="'Test'" [formField]="form.name" />
     </div>
 
     <div class="w-full mb-3">
-      <ui-text [label]="'Label'" [placeholder]="'Test'" [field]="form.label!" />
+      <ui-text [label]="'Label'" [placeholder]="'Test'" [formField]="form.label!" />
     </div>
 
     <!-- select options -->
@@ -36,8 +36,8 @@
 
       @for (option of selectOptionsForm; let index = $index; track index) {
       <div class="ms-auto text-sm w-full mb-3 flex flex-row gap-x-1">
-        <ui-text [label]="'Id'" [field]="selectOptionsForm[index].id" />
-        <ui-text [label]="'Value'" [field]="selectOptionsForm[index].name" />
+        <ui-text [label]="'Id'" [formField]="selectOptionsForm[index].id" />
+        <ui-text [label]="'Value'" [formField]="selectOptionsForm[index].name" />
         <button type="button"
           class="h-10 w-10 flex-none self-end p-2 text-white font-semibold bg-red-600 hover:bg-red-700 focus:bg-red-700 rounded-sm"
           (click)="removeOption(index)">
@@ -72,14 +72,14 @@
       <!-- text, number or select field types -->
       @if (fieldControl.type === 'text') {
       <ui-text [label]="'Value'" [placeholder]="'Enter a default value'"
-        [field]="getValueField(fieldControl)"></ui-text>
+        [formField]="getValueField(fieldControl)"></ui-text>
       }
       @if (fieldControl.type === 'number') {
       <ui-number [label]="'Value'" [placeholder]="'Enter a default value'"
-        [field]="getValueField(fieldControl)"></ui-number>
+        [formField]="getValueField(fieldControl)"></ui-number>
       }
       @if (fieldControl.type === 'select' && fieldControl.options) {
-      <ui-select [label]="'Value'" [placeholder]="'Enter a default value'" [field]="getValueField(fieldControl)"
+      <ui-select [label]="'Value'" [placeholder]="'Enter a default value'" [formField]="getValueField(fieldControl)"
         [options]="fieldControl.options" />
       }
     </div>

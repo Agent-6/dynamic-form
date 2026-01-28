@@ -14,8 +14,8 @@ import {
   apply,
   applyEach,
   disabled,
-  Field,
   type FieldTree,
+  FormField,
   form,
   minLength,
   required,
@@ -33,7 +33,7 @@ import { DynamicFormService } from './dynamic-form-builder.service';
   templateUrl: './dynamic-field-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [TextComponent, NumberComponent, SelectComponent, Field],
+  imports: [TextComponent, NumberComponent, SelectComponent, FormField],
 })
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
