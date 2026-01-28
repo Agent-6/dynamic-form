@@ -6,19 +6,7 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import {
-  applyEach,
-  disabled,
-  Field,
-  type FieldTree,
-  form,
-  type MaybeFieldTree,
-  required,
-  submit,
-  validate,
-} from '@angular/forms/signals';
-import type { FormControlType, IFormControl } from '../../dynamic-form/dynamic-form.model';
-import type { ControlValueByType } from '../type-utils';
+import type { FormControlType } from '../../dynamic-form/dynamic-form.model';
 import { DynamicFormFieldComponent } from './dynamic-field-form';
 import { DynamicFormService } from './dynamic-form-builder.service';
 
@@ -54,15 +42,5 @@ export class DynamicFormBuilderComponent {
 
   removeField(id: string) {
     this.service.removeControl(id);
-  }
-
-  castControlToType<T extends FormControlType>(
-    expectedType: T,
-    control: MaybeFieldTree<IFormControl, number>,
-  ): FieldTree<ControlValueByType<T>, string> | null {
-    if (expectedType === control.type().value()) {
-      return control.value as unknown as FieldTree<ControlValueByType<T>, string>;
-    }
-    return null;
   }
 }

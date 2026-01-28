@@ -13,7 +13,6 @@ import {
 import {
   apply,
   applyEach,
-  applyWhen,
   disabled,
   Field,
   type FieldTree,
@@ -26,7 +25,7 @@ import {
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import { TextComponent } from '../../ui/text/text.component';
-import { SelectControlOption, type FormControlType, type IFormControl } from '../dynamic-form.model';
+import type { FormControlType, IFormControl, SelectControlOption } from '../dynamic-form.model';
 import { DynamicFormService } from './dynamic-form-builder.service';
 
 @Component({
@@ -73,11 +72,9 @@ export class DynamicFormFieldComponent {
     required(control.type, { message: 'field is required' });
     required(control.name, { message: 'field is required' });
 
-    applyWhen(
-      control.options!,
-      ({ valueOf }) => valueOf(control.type) === 'select',
-      this.optionsSchema,
-    );
+    if (control.options) {
+      apply(control.options, this.optionsSchema);
+    }
   });
 
   protected readonly selectOptions = signal<SelectControlOption[]>([]);
@@ -89,16 +86,17 @@ export class DynamicFormFieldComponent {
   });
 
   addOption() {
-    this.selectOptions.update((options) => [
-      ...options,
-      { id: `${options.length + 1}`, name: '' },
-    ]);
+    this.selectOptions.update((options) => [...options, { id: `${options.length + 1}`, name: '' }]);
   }
 
   removeOption(index: number) {
     this.selectOptions.update((options) => {
       options.splice(index, 1);
-      options.forEach((o, i) => o.id = `${i + 1}`);
+      options.forEach((o, i) => {
+        o.id = `${i + 1}`;
+
+        this.form.options;
+      });
       return options;
     });
   }
@@ -120,7 +118,7 @@ export class DynamicFormFieldComponent {
     effect(() => {
       const options = this.selectOptions();
       this.control.update((c) => ({ ...c, options }) as IFormControl);
-    })
+    });
   }
 
   getValueField<T extends IFormControl>(_control: T): FieldTree<T['value'], string> {
@@ -137,7 +135,7 @@ export class DynamicFormFieldComponent {
           : this.service.updateControl(control.id, control);
 
         this.show.set(false);
-      } catch (error) {
+      } catch {
         return [
           {
             fieldTree: this.form.name,
