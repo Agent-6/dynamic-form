@@ -9,19 +9,22 @@ import {
 } from '@angular/core';
 import {
   applyEach,
+  applyWhen,
   disabled,
+  email,
   type FieldTree,
   FormField,
   form,
   type LogicFn,
   readonly,
   required,
+  type SchemaPath,
   schema,
   submit,
 } from '@angular/forms/signals';
+import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import { TextComponent } from '../../ui/text/text.component';
 import type { IFormControl } from '../dynamic-form.model';
 
 @Component({
@@ -29,7 +32,7 @@ import type { IFormControl } from '../dynamic-form.model';
   templateUrl: './dynamic-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [FormField, JsonPipe, SelectComponent, TextComponent, NumberComponent],
+  imports: [FormField, JsonPipe, SelectComponent, InputComponent, NumberComponent],
 })
 export class DynamicFormComponent {
   readonly controls = input.required<IFormControl[]>();
@@ -54,19 +57,36 @@ export class DynamicFormComponent {
     };
   }
 
-  private readonly controlSchema = schema<IFormControl['value']>((control) => {
-    required(control, {
+  whenControl(when: (control: IFormControl) => boolean): LogicFn<IFormControl['value'], boolean> {
+    return ({ fieldTree }) => {
+      const controlName = fieldTree().keyInParent() as string;
+      const control = this.controls().find((c) => c.name === controlName);
+
+      return when(control!);
+    };
+  }
+
+  private readonly controlSchema = schema<IFormControl['value']>((controlValue) => {
+    required(controlValue, {
       message: 'filed is required',
       when: this.getValidator((validators) => !!validators?.required),
     });
 
     disabled(
-      control,
+      controlValue,
       this.getValidator((validators) => (validators?.disabled ? 'field is disabled' : false)),
     );
+
     readonly(
-      control,
+      controlValue,
       this.getValidator((validators) => !!validators?.readonly),
+    );
+
+    applyWhen(
+      controlValue,
+      this.whenControl((control) => control.type === 'email'),
+      (emailValue) =>
+        email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
     );
   });
 

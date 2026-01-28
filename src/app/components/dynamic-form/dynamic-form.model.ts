@@ -64,7 +64,7 @@ export interface DynamicFormControl<T extends FormControlType> {
   validators?: ValidatorsForType<T>;
 }
 
-export type BasicControlTypes = Extract<FormControlType, 'text' | 'number'>;
+export type BasicControlTypes = Extract<FormControlType, 'number' | 'text' | 'email'>;
 export type BasicControlValueType<T extends BasicControlTypes> = T extends 'number'
   ? number
   : string;
@@ -90,4 +90,8 @@ export interface SelectControl extends DynamicFormControl<'select'> {
   variant: 'id' | 'option' | 'multi';
 }
 
-export type IFormControl = BasicControl<'text'> | BasicControl<'number'> | SelectControl;
+type AllBasicControls = {
+  [K in BasicControlTypes]: BasicControl<K>;
+}[BasicControlTypes];
+
+export type IFormControl = AllBasicControls | SelectControl;

@@ -14,6 +14,7 @@ import {
   apply,
   applyEach,
   applyWhen,
+  email,
   type FieldTree,
   FormField,
   form,
@@ -21,13 +22,14 @@ import {
   type PathKind,
   readonly,
   required,
+  type SchemaPath,
   type SchemaPathTree,
   schema,
   submit,
 } from '@angular/forms/signals';
+import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import { TextComponent } from '../../ui/text/text.component';
 import type {
   FormControlType,
   IFormControl,
@@ -41,7 +43,7 @@ import { DynamicFormService } from './dynamic-form-builder.service';
   templateUrl: './dynamic-field-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [TextComponent, NumberComponent, SelectComponent, FormField],
+  imports: [InputComponent, NumberComponent, SelectComponent, FormField],
 })
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
@@ -77,6 +79,15 @@ export class DynamicFormFieldComponent {
     });
   });
 
+  private readonly controlValueSchema = schema<IFormControl['value']>((controlValue) => {
+    applyWhen(
+      controlValue,
+      () => this.control().type === 'email',
+      (emailValue) =>
+        email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
+    );
+  });
+
   protected readonly form = form(this.control, (control) => {
     required(control.type, { message: 'field is required' });
     required(control.name, { message: 'field is required' });
@@ -89,6 +100,8 @@ export class DynamicFormFieldComponent {
         apply(selectControl.options, this.optionsSchema);
       },
     );
+
+    apply(control.value as SchemaPath<IFormControl['value']>, this.controlValueSchema);
   });
 
   protected readonly selectOptionsForm = computed(() => {
@@ -125,6 +138,7 @@ export class DynamicFormFieldComponent {
     { id: 'text', name: 'Text' },
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },
+    { id: 'email', name: 'Email' },
   ]);
 
   constructor() {

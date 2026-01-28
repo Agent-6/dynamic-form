@@ -7,8 +7,9 @@
 
     <div class="w-full mb-3">
       <!-- text or number field types -->
-      @if (control.type === 'text') {
-      <ui-text [label]="label" [placeholder]="placeholder" [formField]="getField(control)"></ui-text>
+      @if (control.type === 'text' || control.type === 'email') {
+      <ui-input [label]="label" [placeholder]="placeholder" [formField]="getField(control)"
+        [type]="control.type"></ui-input>
       }
       @if (control.type === 'number') {
       <ui-number [label]="label" [placeholder]="placeholder" [formField]="getField(control)"></ui-number>

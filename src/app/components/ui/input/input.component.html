@@ -1,5 +1,5 @@
 <ui-form-field>
-  <input class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" [id]="name()" type="text" [value]="value()"
+  <input class="w-full h-10 rounded-sm border-2 border-gray-200 p-2" [id]="name()" [type]="type()" [value]="value()"
     (input)="value.set($event.target.value)" [placeholder]="placeholder() || ''" (blur)="touched.set(true)"
     [disabled]="disabled()" [readonly]="readonly()" [class.bg-gray-200]="disabled()" />
 </ui-form-field>
