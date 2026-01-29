@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
 import type { BasicControlTypes } from '../../dynamic-form/dynamic-form.model';
 import { FormFieldComponent } from '../form/form-field/form-field.component';
 import {

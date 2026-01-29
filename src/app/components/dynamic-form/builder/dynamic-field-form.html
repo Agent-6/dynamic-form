@@ -68,17 +68,18 @@
 
     <div class="w-full mb-3">
       <!-- text, number or select field types -->
-      @if (fieldControl.type === 'text' || fieldControl.type === 'email') {
-      <ui-input [label]="'Value'" [placeholder]="'Enter a default value'" [formField]="getValueField(fieldControl)"
-        [type]="fieldControl.type"></ui-input>
+      @if (fieldControl.type === 'text' || fieldControl.type === 'email' || fieldControl.type === 'password' ||
+      fieldControl.type === 'url') {
+      <ui-input [label]="'Default Value'" [placeholder]="'Enter a default value'"
+        [formField]="getValueField(fieldControl)" [type]="fieldControl.type"></ui-input>
       }
       @if (fieldControl.type === 'number') {
-      <ui-number [label]="'Value'" [placeholder]="'Enter a default value'"
+      <ui-number [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)"></ui-number>
       }
       @if (fieldControl.type === 'select' && fieldControl.options) {
-      <ui-select [label]="'Value'" [placeholder]="'Enter a default value'" [formField]="getValueField(fieldControl)"
-        [options]="fieldControl.options" />
+      <ui-select [label]="'Default Value'" [placeholder]="'Enter a default value'"
+        [formField]="getValueField(fieldControl)" [options]="fieldControl.options" />
       }
     </div>
   </form>

@@ -19,8 +19,10 @@ import {
   readonly,
   required,
   type SchemaPath,
+  type SchemaPathTree,
   schema,
   submit,
+  validate,
 } from '@angular/forms/signals';
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
@@ -66,6 +68,17 @@ export class DynamicFormComponent {
     };
   }
 
+  url(field: SchemaPathTree<string>, options?: { message: string }) {
+    validate(field, ({ value }) => {
+      try {
+        new URL(value());
+        return null;
+      } catch {
+        return { kind: 'url', message: options?.message || 'URL format is not correct' };
+      }
+    });
+  }
+
   private readonly controlSchema = schema<IFormControl['value']>((controlValue) => {
     required(controlValue, {
       message: 'filed is required',
@@ -87,6 +100,12 @@ export class DynamicFormComponent {
       this.whenControl((control) => control.type === 'email'),
       (emailValue) =>
         email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
+    );
+
+    applyWhen(
+      controlValue,
+      this.whenControl((control) => control.type === 'url'),
+      (urlValue) => this.url(urlValue as SchemaPath<string>),
     );
   });
 

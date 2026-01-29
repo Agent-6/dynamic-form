@@ -64,7 +64,10 @@ export interface DynamicFormControl<T extends FormControlType> {
   validators?: ValidatorsForType<T>;
 }
 
-export type BasicControlTypes = Extract<FormControlType, 'number' | 'text' | 'email'>;
+export type BasicControlTypes = Extract<
+  FormControlType,
+  'number' | 'text' | 'email' | 'password' | 'url'
+>;
 export type BasicControlValueType<T extends BasicControlTypes> = T extends 'number'
   ? number
   : string;

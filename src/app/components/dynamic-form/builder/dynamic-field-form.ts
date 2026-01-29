@@ -26,6 +26,7 @@ import {
   type SchemaPathTree,
   schema,
   submit,
+  validate,
 } from '@angular/forms/signals';
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
@@ -79,12 +80,29 @@ export class DynamicFormFieldComponent {
     });
   });
 
+  url(field: SchemaPathTree<string>, options?: { message: string }) {
+    validate(field, ({ value }) => {
+      try {
+        new URL(value());
+        return null;
+      } catch {
+        return { kind: 'url', message: options?.message || 'URL format is not correct' };
+      }
+    });
+  }
+
   private readonly controlValueSchema = schema<IFormControl['value']>((controlValue) => {
     applyWhen(
       controlValue,
       () => this.control().type === 'email',
       (emailValue) =>
         email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
+    );
+
+    applyWhen(
+      controlValue,
+      () => this.control().type === 'url',
+      (urlValue) => this.url(urlValue as SchemaPath<string>),
     );
   });
 
@@ -139,6 +157,8 @@ export class DynamicFormFieldComponent {
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },
     { id: 'email', name: 'Email' },
+    { id: 'password', name: 'Password' },
+    { id: 'url', name: 'URL' },
   ]);
 
   constructor() {
