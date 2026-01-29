@@ -82,6 +82,34 @@
         [formField]="getValueField(fieldControl)" [options]="fieldControl.options" />
       }
     </div>
+
+    @if (!form.validators) {
+    <div class="w-full">
+      <div>Validators</div>
+      <button type="button" (click)="initValidators()">Init Validators</button>
+    </div>
+    }
+    <!-- row -->
+    @else {
+    <div class="w-full">
+      <div>Validators</div>
+
+      <div>
+        <label class="me-2">Required</label>
+        <input type="checkbox" [formField]="form.validators.required!" />
+      </div>
+
+      <div>
+        <label class="me-2">Readonly</label>
+        <input type="checkbox" [formField]="form.validators.readonly!" />
+      </div>
+
+      <div>
+        <label class="me-2">Disabled</label>
+        <input type="checkbox" [formField]="form.validators.disabled!" />
+      </div>
+    </div>
+    }
   </form>
 
   <!-- actions -->

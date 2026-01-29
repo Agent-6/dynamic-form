@@ -31,11 +31,12 @@ import {
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import type {
-  FormControlType,
-  IFormControl,
-  SelectControl,
-  SelectControlOption,
+import {
+  type FormControlType,
+  type IFormControl,
+  initValidatorsByType,
+  type SelectControl,
+  type SelectControlOption,
 } from '../dynamic-form.model';
 import { DynamicFormService } from './dynamic-form-builder.service';
 
@@ -172,6 +173,13 @@ export class DynamicFormFieldComponent {
 
   getValueField<T extends IFormControl>(_control: T): FieldTree<T['value'], string> {
     return this.form.value as FieldTree<T['value'], string>;
+  }
+
+  initValidators() {
+    this.control.update((control) => ({
+      ...control,
+      validators: initValidatorsByType(control.type),
+    }));
   }
 
   submit() {

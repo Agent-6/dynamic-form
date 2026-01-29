@@ -53,6 +53,41 @@ type ValidatorsForType<T extends FormControlType> = T extends 'text'
       ? Validators
       : Validators;
 
+export function initValidatorsByType<T extends FormControlType>(type: T): ValidatorsForType<T> {
+  const baseValidators: Validators = {
+    required: false,
+    disabled: false,
+    readonly: false,
+  };
+
+  switch (type) {
+    case 'text':
+    case 'textarea':
+    case 'email':
+    case 'password':
+    case 'url':
+    case 'tel':
+    case 'search':
+      return {
+        ...baseValidators,
+        minLength: undefined,
+        maxLength: undefined,
+        pattern: undefined,
+      } as ValidatorsForType<T>;
+
+    case 'number':
+      return {
+        ...baseValidators,
+        min: undefined,
+        max: undefined,
+        step: undefined,
+      } as ValidatorsForType<T>;
+
+    default:
+      return baseValidators as ValidatorsForType<T>;
+  }
+}
+
 export interface DynamicFormControl<T extends FormControlType> {
   id: string;
   type: T;
