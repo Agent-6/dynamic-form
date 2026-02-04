@@ -116,8 +116,8 @@ export interface SelectControlOption {
   id: string;
   name: string;
 }
-export type SelectControlType = 'id' | 'option' | 'multi';
-export type SelectControlValueType<T extends SelectControlType> = T extends 'id'
+export type SelectVariantType = 'id' | 'option' | 'multi';
+export type SelectControlValueType<T extends SelectVariantType> = T extends 'id'
   ? string
   : T extends 'option'
     ? SelectControlOption
@@ -133,3 +133,29 @@ type AllBasicControls = {
 }[BasicControlTypes];
 
 export type IFormControl = AllBasicControls | SelectControl;
+
+type TextControlType = 'text' | 'email' | 'password' | 'url';
+type NumberControlType = 'number';
+type SelectControlType = 'select';
+
+// Type predicate for text controls
+export const isText = (
+  control: IFormControl,
+): control is IFormControl & { type: TextControlType } => {
+  const types: TextControlType[] = ['text', 'email', 'password', 'url'];
+  return types.includes(control.type as TextControlType);
+};
+
+// Type predicate for number controls
+export const isNumber = (
+  control: IFormControl,
+): control is IFormControl & { type: NumberControlType } => {
+  return control.type === 'number';
+};
+
+// Type predicate for select controls
+export const isSelect = (
+  control: IFormControl,
+): control is IFormControl & { type: SelectControlType } => {
+  return control.type === 'select';
+};

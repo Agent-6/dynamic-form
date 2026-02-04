@@ -35,6 +35,9 @@ import {
   type FormControlType,
   type IFormControl,
   initValidatorsByType,
+  isNumber,
+  isSelect,
+  isText,
   type SelectControl,
   type SelectControlOption,
 } from '../dynamic-form.model';
@@ -56,6 +59,10 @@ export class DynamicFormFieldComponent {
   protected readonly mode = computed<'edit' | 'create'>(() =>
     this.controlId() ? 'edit' : 'create',
   );
+
+  isText = isText;
+  isNumber = isNumber;
+  isSelect = isSelect;
 
   protected readonly control = linkedSignal<IFormControl>(() => {
     const control = this.service.controls().find((c) => c.id === this.controlId());

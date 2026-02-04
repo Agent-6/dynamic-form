@@ -27,7 +27,7 @@ import {
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import type { IFormControl } from '../dynamic-form.model';
+import { type IFormControl, isNumber, isSelect, isText } from '../dynamic-form.model';
 
 type whenFn<T extends IFormControl> = (control: IFormControl, value: T['value']) => boolean;
 
@@ -49,6 +49,10 @@ export class DynamicFormComponent {
 
     return map;
   });
+
+  isText = isText;
+  isNumber = isNumber;
+  isSelect = isSelect;
 
   getValidator<T>(
     selector: (validators: IFormControl['validators']) => T,

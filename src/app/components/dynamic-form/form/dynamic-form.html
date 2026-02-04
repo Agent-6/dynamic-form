@@ -6,16 +6,15 @@
     @let placeholder = control.placeholder;
 
     <div class="w-full mb-3">
-      <!-- text or number field types -->
-      @if (control.type === 'text' || control.type === 'email' || control.type === 'password' || control.type === 'url')
+      @if (isText(control))
       {
       <ui-input [label]="label" [placeholder]="placeholder" [formField]="getField(control)"
         [type]="control.type"></ui-input>
       }
-      @if (control.type === 'number') {
+      @if (isNumber(control)) {
       <ui-number [label]="label" [placeholder]="placeholder" [formField]="getField(control)"></ui-number>
       }
-      @if (control.type === 'select') {
+      @if (isSelect(control)) {
       <ui-select [label]="label" [placeholder]="placeholder" [formField]="getField(control)"
         [options]="control.options"></ui-select>
       }

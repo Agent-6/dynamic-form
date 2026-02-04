@@ -68,16 +68,15 @@
 
     <div class="w-full mb-3">
       <!-- text, number or select field types -->
-      @if (fieldControl.type === 'text' || fieldControl.type === 'email' || fieldControl.type === 'password' ||
-      fieldControl.type === 'url') {
+      @if (isText(fieldControl)) {
       <ui-input [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)" [type]="fieldControl.type"></ui-input>
       }
-      @if (fieldControl.type === 'number') {
+      @if (isNumber(fieldControl)) {
       <ui-number [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)"></ui-number>
       }
-      @if (fieldControl.type === 'select' && fieldControl.options) {
+      @if (isSelect(fieldControl) && fieldControl.options) {
       <ui-select [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)" [options]="fieldControl.options" />
       }
@@ -86,7 +85,9 @@
     @if (!form.validators) {
     <div class="w-full">
       <div>Validators</div>
-      <button type="button" (click)="initValidators()">Init Validators</button>
+      <button type="button"
+        class="ms-auto p-2 text-white font-semibold bg-black hover:bg-gray-900 focus:bg-gray-900 rounded-sm"
+        (click)="initValidators()">Init Validators</button>
     </div>
     }
     <!-- row -->
