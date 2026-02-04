@@ -14,7 +14,6 @@ import {
   apply,
   applyEach,
   applyWhen,
-  email,
   type FieldTree,
   FormField,
   form,
@@ -22,7 +21,6 @@ import {
   type PathKind,
   readonly,
   required,
-  type SchemaPath,
   type SchemaPathTree,
   schema,
   submit,
@@ -32,6 +30,7 @@ import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import {
+  applyTypeValidators,
   type FormControlType,
   type IFormControl,
   initValidatorsByType,
@@ -99,21 +98,6 @@ export class DynamicFormFieldComponent {
     });
   }
 
-  private readonly controlValueSchema = schema<IFormControl['value']>((controlValue) => {
-    applyWhen(
-      controlValue,
-      () => this.control().type === 'email',
-      (emailValue) =>
-        email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
-    );
-
-    applyWhen(
-      controlValue,
-      () => this.control().type === 'url' && !!this.control().value,
-      (urlValue) => this.url(urlValue as SchemaPath<string>),
-    );
-  });
-
   protected readonly form = form(this.control, (control) => {
     required(control.type, { message: 'field is required' });
     required(control.name, { message: 'field is required' });
@@ -127,7 +111,7 @@ export class DynamicFormFieldComponent {
       },
     );
 
-    apply(control.value as SchemaPath<IFormControl['value']>, this.controlValueSchema);
+    applyTypeValidators(control.value, () => this.control());
   });
 
   protected readonly selectOptionsForm = computed(() => {

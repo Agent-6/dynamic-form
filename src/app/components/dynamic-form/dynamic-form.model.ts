@@ -1,3 +1,14 @@
+import {
+  applyWhen,
+  email,
+  type PathKind,
+  type RootFieldContext,
+  type SchemaOrSchemaFn,
+  type SchemaPath,
+  type SchemaPathTree,
+  validate,
+} from '@angular/forms/signals';
+
 export type FormControlType =
   | 'text'
   | 'textarea'
@@ -26,6 +37,38 @@ export type FormControlType =
   | 'richtext'
   | 'readonly'
   | 'hidden';
+
+const url = (field: SchemaPathTree<string>, options?: { message: string }) => {
+  validate(field, ({ value }) => {
+    try {
+      new URL(value());
+      return null;
+    } catch {
+      return { kind: 'url', message: options?.message || 'URL format is not correct' };
+    }
+  });
+};
+
+export const validatorsRegistry: Partial<
+  Record<FormControlType, NoInfer<SchemaOrSchemaFn<IFormControl['value'], PathKind.Root>>>
+> = {
+  email: (emailValue) =>
+    email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
+  url: (urlValue) => url(urlValue as SchemaPath<string>),
+};
+
+export type getControlFormContext = (
+  ctx: RootFieldContext<IFormControl['value']>,
+) => IFormControl | undefined;
+
+export const applyTypeValidators = (
+  path: SchemaPath<IFormControl['value']>,
+  getControl: getControlFormContext,
+) => {
+  Object.entries(validatorsRegistry).forEach(([key, validator]) => {
+    applyWhen(path, (ctx) => getControl(ctx)?.type === key && !!ctx.value(), validator);
+  });
+};
 
 interface Validators {
   required?: boolean;

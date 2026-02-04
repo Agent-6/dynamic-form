@@ -9,27 +9,27 @@ import {
 } from '@angular/core';
 import {
   applyEach,
-  applyWhen,
   disabled,
-  email,
   type FieldTree,
   FormField,
   form,
   type LogicFn,
   readonly,
   required,
-  type SchemaPath,
-  type SchemaPathTree,
   schema,
   submit,
-  validate,
 } from '@angular/forms/signals';
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import { type IFormControl, isNumber, isSelect, isText } from '../dynamic-form.model';
-
-type whenFn<T extends IFormControl> = (control: IFormControl, value: T['value']) => boolean;
+import {
+  applyTypeValidators,
+  type getControlFormContext,
+  type IFormControl,
+  isNumber,
+  isSelect,
+  isText,
+} from '../dynamic-form.model';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -65,25 +65,11 @@ export class DynamicFormComponent {
     };
   }
 
-  whenControl<T extends IFormControl>(when: whenFn<T>): LogicFn<IFormControl['value'], boolean> {
-    return ({ fieldTree, value }) => {
-      const controlName = fieldTree().keyInParent() as string;
-      const control = this.controls().find((c) => c.name === controlName);
-      if (!control) return false;
-      return when(control, value());
-    };
-  }
-
-  url(field: SchemaPathTree<string>, options?: { message: string }) {
-    validate(field, ({ value }) => {
-      try {
-        new URL(value());
-        return null;
-      } catch {
-        return { kind: 'url', message: options?.message || 'URL format is not correct' };
-      }
-    });
-  }
+  getControl: getControlFormContext = ({ fieldTree }) => {
+    const controlName = fieldTree().keyInParent() as string;
+    const control = this.controls().find((c) => c.name === controlName);
+    return control;
+  };
 
   private readonly controlSchema = schema<IFormControl['value']>((controlValue) => {
     required(controlValue, {
@@ -101,18 +87,7 @@ export class DynamicFormComponent {
       this.getValidator((validators) => !!validators?.readonly),
     );
 
-    applyWhen(
-      controlValue,
-      this.whenControl((control) => control.type === 'email'),
-      (emailValue) =>
-        email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
-    );
-
-    applyWhen(
-      controlValue,
-      this.whenControl((control, value) => control.type === 'url' && !!value),
-      (urlValue) => this.url(urlValue as SchemaPath<string>),
-    );
+    applyTypeValidators(controlValue, this.getControl);
   });
 
   readonly formState = linkedSignal<{ [key: string]: IFormControl['value'] }>(() => {
