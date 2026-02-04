@@ -102,7 +102,7 @@ export class DynamicFormFieldComponent {
 
     applyWhen(
       controlValue,
-      () => this.control().type === 'url',
+      () => this.control().type === 'url' && !!this.control().value,
       (urlValue) => this.url(urlValue as SchemaPath<string>),
     );
   });

@@ -29,6 +29,8 @@ import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import type { IFormControl } from '../dynamic-form.model';
 
+type whenFn<T extends IFormControl> = (control: IFormControl, value: T['value']) => boolean;
+
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.html',
@@ -59,12 +61,12 @@ export class DynamicFormComponent {
     };
   }
 
-  whenControl(when: (control: IFormControl) => boolean): LogicFn<IFormControl['value'], boolean> {
-    return ({ fieldTree }) => {
+  whenControl<T extends IFormControl>(when: whenFn<T>): LogicFn<IFormControl['value'], boolean> {
+    return ({ fieldTree, value }) => {
       const controlName = fieldTree().keyInParent() as string;
       const control = this.controls().find((c) => c.name === controlName);
-
-      return when(control!);
+      if (!control) return false;
+      return when(control, value());
     };
   }
 
@@ -104,7 +106,7 @@ export class DynamicFormComponent {
 
     applyWhen(
       controlValue,
-      this.whenControl((control) => control.type === 'url'),
+      this.whenControl((control, value) => control.type === 'url' && !!value),
       (urlValue) => this.url(urlValue as SchemaPath<string>),
     );
   });
