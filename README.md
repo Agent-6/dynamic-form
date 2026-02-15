@@ -1,5 +1,9 @@
 # DynamicForm
 
+## Overview
+This is meant to be a dynamic form generator (builder) as well as a dynamic forms renderer.
+The project is using angular's new expermintail Signal-Based forms API and produces json schema that can be stored and rendered as needed.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
 
 ## Development server
