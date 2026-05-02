@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,36 +13,29 @@ import {
   applyEach,
   disabled,
   type FieldTree,
-  FormField,
   form,
   type LogicFn,
   readonly,
   required,
   schema,
-  type SchemaPath,
   submit,
 } from '@angular/forms/signals';
-import { InputComponent } from '../../ui/input/input.component';
-import { NumberComponent } from '../../ui/number/number.component';
-import { SelectComponent } from '../../ui/select/select.component';
 import {
   applyTypeValidators,
-  type BaseFormControl,
   type getControlFormContext,
   type IFormControl,
-  isNumber,
-  isSelect,
-  isText,
+  type DiscriminatedField,
 } from '../dynamic-form.model';
+import { FormFieldRendererComponent } from '../form-field-renderer';
 
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [FormField, NgTemplateOutlet, SelectComponent, InputComponent, NumberComponent, JsonPipe],
+  imports: [JsonPipe, FormFieldRendererComponent],
 })
-export class DynamicFormComponent<TControl extends BaseFormControl<string, any> = IFormControl> {
+export class DynamicFormComponent<TControl extends IFormControl = IFormControl> {
   readonly controls = input.required<TControl[]>();
   readonly fieldTemplate = contentChild<TemplateRef<{ $implicit: TControl; field: FieldTree<any, any> }>>('fieldTemplate');
 
@@ -54,10 +47,6 @@ export class DynamicFormComponent<TControl extends BaseFormControl<string, any> 
 
     return map;
   });
-
-  isText = isText;
-  isNumber = isNumber;
-  isSelect = isSelect;
 
   getValidator<T>(
     selector: (validators: any) => T,
@@ -76,42 +65,48 @@ export class DynamicFormComponent<TControl extends BaseFormControl<string, any> 
     return control;
   };
 
-  private readonly controlSchema = schema<any>((controlValue) => {
-    required(controlValue as unknown as SchemaPath<any>, {
+  private readonly controlSchema = schema<IFormControl['value']>((controlValue) => {
+    required(controlValue, {
       message: 'filed is required',
       when: this.getValidator((validators) => !!validators?.required),
     });
 
     disabled(
-      controlValue as unknown as SchemaPath<any>,
+      controlValue,
       this.getValidator((validators) => (validators?.disabled ? 'field is disabled' : false)),
     );
 
     readonly(
-      controlValue as unknown as SchemaPath<any>,
+      controlValue,
       this.getValidator((validators) => !!validators?.readonly),
     );
 
-    applyTypeValidators(controlValue as unknown as any, this.getControl);
+    applyTypeValidators(controlValue, this.getControl);
   });
 
-  readonly formState = linkedSignal<{ [key: string]: IFormControl['value'] }>(() => {
-    const controls: { [key: IFormControl['name']]: IFormControl['value'] } = {};
-    for (const control of this.controls()) {
-      controls[control.name] = control.value;
-    }
+  readonly formState = linkedSignal<TControl[], { [key: IFormControl['name']]: IFormControl['value'] }>({
+    source: this.controls,
+    computation: (controls, previous) => {
+      const state = {} as { [key: IFormControl['name']]: IFormControl['value'] };
+      for (const control of controls) {
+        state[control.name] = previous?.value?.[control.name] ?? control.value;
+      }
 
-    return controls;
+      return state;
+    }
   });
 
   readonly form = form(this.formState, (schema) => {
     applyEach(schema, this.controlSchema);
   });
 
-  getField(
-    control: TControl,
-  ): FieldTree<any, string> {
-    return (this.form as any)[control.name] as FieldTree<any, string>;
+  getFieldData<
+    TControl extends IFormControl,
+    TReturn extends TControl['value']
+  >(
+    control: TControl
+  ): DiscriminatedField {
+    return { control, field: this.form[control.name] as FieldTree<TReturn, string> } as DiscriminatedField;
   }
 
   submit() {
