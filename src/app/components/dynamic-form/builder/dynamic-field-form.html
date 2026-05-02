@@ -66,23 +66,9 @@
     </div>
     }
 
+    <!-- Default Value form field -->
     <div class="w-full mb-3">
-      <!-- text, number or select field types -->
-      @if (isText(fieldControl)) {
-      <ui-input [label]="'Default Value'" [placeholder]="'Enter a default value'"
-        [formField]="getValueField(fieldControl)" [type]="fieldControl.type"></ui-input>
-      }
-      @else if (isNumber(fieldControl)) {
-      <ui-number [label]="'Default Value'" [placeholder]="'Enter a default value'"
-        [formField]="getValueField(fieldControl)"></ui-number>
-      }
-      @else if (isSelect(fieldControl) && fieldControl.options) {
-      <ui-select [label]="'Default Value'" [placeholder]="'Enter a default value'"
-        [formField]="getValueField(fieldControl)" [options]="fieldControl.options" />
-      }
-      @else if (isColor(fieldControl)) {
-      <ui-color-picker [label]="'Default Value'" [formField]="getValueField(fieldControl)"></ui-color-picker>
-      }
+      <app-form-field-renderer [data]="getFieldData(fieldControl)" />
     </div>
 
     @if (!form.validators) {

@@ -27,31 +27,29 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { InputComponent } from '../../ui/input/input.component';
-import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import { ColorPickerComponent } from '../../ui/color-picker/color-picker.component';
 import {
   applyTypeValidators,
-  type BaseFormControl,
+  type DiscriminatedField,
   type IFormControl,
   initValidatorsByType,
-  isNumber,
-  isSelect,
-  isText,
-  isColor,
-  type NumberControl,
   type SelectControl,
   type SelectControlOption,
-  type TextControl,
 } from '../dynamic-form.model';
 import { DynamicFormService } from './dynamic-form-builder.service';
+import { FormFieldRendererComponent } from '../form-field-renderer';
 
 @Component({
   selector: 'app-dynamic-field-form',
   templateUrl: './dynamic-field-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [InputComponent, NumberComponent, SelectComponent, FormField, ColorPickerComponent],
+  imports: [
+    InputComponent,
+    SelectComponent,
+    FormField,
+    FormFieldRendererComponent,
+  ],
 })
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
@@ -63,21 +61,16 @@ export class DynamicFormFieldComponent {
     this.controlId() ? 'edit' : 'create',
   );
 
-  isText = isText;
-  isNumber = isNumber;
-  isSelect = isSelect;
-  isColor = isColor;
-
   protected readonly control = linkedSignal<IFormControl>(() => {
     const control = this.service.controls().find((c) => c.id === this.controlId());
     return (
-      control || {
+      control || ({
         id: crypto.randomUUID(),
         name: '',
         type: 'text',
         value: '',
         label: '',
-      }
+      })
     );
   });
 
@@ -168,8 +161,11 @@ export class DynamicFormFieldComponent {
     });
   }
 
-  getValueField<T extends IFormControl>(_control: T): FieldTree<T['value'], string> {
-    return this.form.value as FieldTree<T['value'], string>;
+  getFieldData<T extends IFormControl>(control: T): DiscriminatedField {
+    return {
+      control: { ...control, label: 'Default Value', placeholder: 'Enter a default value' },
+      field: this.form.value as FieldTree<T['value'], string>,
+    } as DiscriminatedField;
   }
 
   initValidators() {
