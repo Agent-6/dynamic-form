@@ -142,7 +142,7 @@ export class DynamicFormFieldComponent {
     });
   }
 
-  readonly typeOptions = signal<{ id: string; name: string }[]>([
+  readonly typeOptions = signal<{ id: IFormControl['type']; name: string }[]>([
     { id: 'text', name: 'Text' },
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },

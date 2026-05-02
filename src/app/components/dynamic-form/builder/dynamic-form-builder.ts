@@ -6,7 +6,6 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import type { FormControlType } from '../../dynamic-form/dynamic-form.model';
 import { DynamicFormFieldComponent } from './dynamic-field-form';
 import { DynamicFormService } from './dynamic-form-builder.service';
 
@@ -23,12 +22,6 @@ export class DynamicFormBuilderComponent {
 
   protected readonly show = signal<boolean>(false);
   protected readonly selectedId = signal<string | undefined>(undefined);
-
-  readonly typeOptions = signal<{ id: FormControlType; name: string }[]>([
-    { id: 'text', name: 'Text' },
-    { id: 'number', name: 'Number' },
-    { id: 'select', name: 'Select' },
-  ]);
 
   addField() {
     this.show.set(true);
