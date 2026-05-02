@@ -1,15 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
-import { FormField, type FieldTree } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { InputComponent } from '../ui/input/input.component';
 import { NumberComponent } from '../ui/number/number.component';
 import { SelectComponent } from '../ui/select/select.component';
 import { ColorPickerComponent } from '../ui/color-picker/color-picker.component';
 import {
-  isNumber,
-  isSelect,
-  isText,
-  isColor,
-  type IFormControl,
+  type DiscriminatedField,
+  isType,
 } from './dynamic-form.model';
 
 @Component({
@@ -17,33 +14,34 @@ import {
   standalone: true,
   imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, FormField],
   template: `
-    @let c = control();
-    @let f = field();
+    @let d = data();
 
-    @if (isText(c)) {
+    @if (isType(d, 'text', 'email', 'url', 'textarea', 'password', 'tel', 'search', 'richtext')) {
       <ui-input
-        [label]="c.label || ''"
-        [placeholder]="c.placeholder"
-        [formField]="$any(f)"
-        [type]="c.type"
+        [label]="d.control.label || ''"
+        [placeholder]="d.control.placeholder"
+        [formField]="d.field"
+        [type]="d.control.type"
       />
-    } @else if (isNumber(c)) {
+    } @else if (isType(d, 'number')) {
       <ui-number
-        [label]="c.label || ''"
-        [placeholder]="c.placeholder"
-        [formField]="$any(f)"
+        [label]="d.control.label || ''"
+        [placeholder]="d.control.placeholder"
+        [formField]="d.field"
       />
-    } @else if (isSelect(c)) {
+    } @else if (isType(d, 'select')) {
       <ui-select
-        [label]="c.label || ''"
-        [placeholder]="c.placeholder"
-        [formField]="$any(f)"
-        [options]="c.options"
+        [label]="d.control.label || ''"
+        [placeholder]="d.control.placeholder"
+        [formField]="d.field"
+        [options]="d.control.options"
+        [variant]="d.control.variant"
+        [multi]="d.control.multi"
       />
-    } @else if (isColor(c)) {
+    } @else if (isType(d, 'color')) {
       <ui-color-picker
-        [label]="c.label || ''"
-        [formField]="$any(f)"
+        [label]="d.control.label || ''"
+        [formField]="d.field"
       />
     }
   `,
@@ -51,11 +49,7 @@ import {
   encapsulation: ViewEncapsulation.None,
 })
 export class FormFieldRendererComponent {
-  control = input.required<IFormControl>();
-  field = input.required<FieldTree<any, any>>();
+  data = input.required<DiscriminatedField>();
 
-  protected readonly isText = isText;
-  protected readonly isNumber = isNumber;
-  protected readonly isSelect = isSelect;
-  protected readonly isColor = isColor;
+  protected isType = isType;
 }
