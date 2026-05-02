@@ -1,5 +1,9 @@
 # DynamicForm
 
+## Overview
+This is meant to be a dynamic form generator (builder) as well as a dynamic forms renderer.
+The project is using angular's new experimental Signal-Based forms API and produces json schema that can be stored and rendered as needed.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
 
 ## Development server
@@ -11,6 +15,14 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+or
+
+use the dev container included in the project to spin up a container with the needed tooling, and then run
+
+```bash
+pnpm run start
+```
 
 ## Code scaffolding
 
