@@ -31,37 +31,24 @@ export class SelectComponent extends FormFieldControl<SelectControl['value']> {
   /** The options for the select. */
   readonly options = input.required<SelectControlOption[]>();
   readonly variant = input<SelectControl['variant']>('id');
+  readonly multi = input<SelectControl['multi']>(false);
 
   protected readonly open = signal<boolean>(false);
-
-  protected readonly selectedOptionLabel = computed(() => {
-    switch (this.variant()) {
-      case 'multi': {
-        const values = this.value() as SelectControlOption[];
-        return values?.map((v) => v.name)?.join(' ,');
-      }
-      case 'option': {
-        const value = this.value() as SelectControlOption;
-        return value?.name;
-      }
-      case 'id': {
-        const id = this.value() as string;
-        return this.options().find((o) => o.id === id)?.name;
-      }
-    }
+  
+  protected readonly selectedOptionsLabel = computed(() => {
+    return this.selectedOptions()?.map((o) => o.name)?.join(' ,');
   });
-
-  getOptionValue(option: SelectControlOption) {
-    switch (this.variant()) {
-      case 'multi': {
-        const values = this.value() as SelectControlOption[];
-        const rest = values?.filter((v) => v.id !== option.id) || [];
-        return [...rest, option];
-      }
-      case 'option':
-        return option;
-      case 'id':
-        return option.id;
+  
+  private readonly selectedOptions = computed(() => {
+    const value = this.value();
+    if (!value) return [];
+    
+    const variant = this.variant();
+    if (variant === 'option') {
+      return this.multi() ? value as SelectControlOption[] : [value as SelectControlOption];
     }
-  }
+
+    const ids = this.multi() ? value as string[] : [value as string];
+    return this.options().filter((o) => ids.includes(o.id));
+  });
 }
