@@ -49,12 +49,18 @@ const url = (field: SchemaPathTree<string>, options?: { message: string }) => {
   });
 };
 
+export interface Validators {
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+}
+
 export const validatorsRegistry: Partial<
   Record<FormControlType, NoInfer<SchemaOrSchemaFn<IFormControl['value'], PathKind.Root>>>
 > = {
   email: (emailValue) =>
-    email(emailValue as SchemaPath<string>, { message: 'Email format is not correct' }),
-  url: (urlValue) => url(urlValue as SchemaPath<string>),
+    email(emailValue as unknown as SchemaPath<string>, { message: 'Email format is not correct' }),
+  url: (urlValue) => url(urlValue as unknown as SchemaPath<string>),
 };
 
 export type getControlFormContext = (
@@ -70,33 +76,7 @@ export const applyTypeValidators = (
   });
 };
 
-interface Validators {
-  required?: boolean;
-  disabled?: boolean;
-  readonly?: boolean;
-}
-
-interface TextValidators extends Validators {
-  minLength?: number;
-  maxLength?: number;
-  pattern?: RegExp;
-}
-
-interface NumberValidators extends Validators {
-  min?: number;
-  max?: number;
-  step?: number;
-}
-
-type ValidatorsForType<T extends FormControlType> = T extends 'text'
-  ? TextValidators
-  : T extends 'number'
-    ? NumberValidators
-    : T extends 'select'
-      ? Validators
-      : Validators;
-
-export function initValidatorsByType<T extends FormControlType>(type: T): ValidatorsForType<T> {
+export function initValidatorsByType(type: string): any {
   const baseValidators: Validators = {
     required: false,
     disabled: false,
@@ -116,7 +96,7 @@ export function initValidatorsByType<T extends FormControlType>(type: T): Valida
         minLength: undefined,
         maxLength: undefined,
         pattern: undefined,
-      } as ValidatorsForType<T>;
+      };
 
     case 'number':
       return {
@@ -124,58 +104,71 @@ export function initValidatorsByType<T extends FormControlType>(type: T): Valida
         min: undefined,
         max: undefined,
         step: undefined,
-      } as ValidatorsForType<T>;
+      };
 
     default:
-      return baseValidators as ValidatorsForType<T>;
+      return baseValidators;
   }
 }
 
-export interface DynamicFormControl<T extends FormControlType> {
+export interface BaseFormControl<TType extends string, TValue, TValidators = any, TMeta = any> {
   id: string;
-  type: T;
+  type: TType;
   name: string;
   label?: string;
   description?: string;
   placeholder?: string;
-  hidden?: boolean;
-  validators?: ValidatorsForType<T>;
+  value: TValue;
+  validators?: TValidators;
+  meta?: TMeta;
 }
 
-export type BasicControlTypes = Extract<
-  FormControlType,
-  'number' | 'text' | 'email' | 'password' | 'url'
+export type TextValidators = Validators & {
+  minLength?: number;
+  maxLength?: number;
+  pattern?: RegExp;
+};
+
+export type NumberValidators = Validators & {
+  min?: number;
+  max?: number;
+  step?: number;
+};
+
+export type BasicControlTypes =
+  | 'text'
+  | 'textarea'
+  | 'email'
+  | 'password'
+  | 'url'
+  | 'tel'
+  | 'search'
+  | 'number';
+
+export type TextControl = BaseFormControl<
+  Exclude<BasicControlTypes, 'number'>,
+  string,
+  TextValidators
 >;
-export type BasicControlValueType<T extends BasicControlTypes> = T extends 'number'
-  ? number
-  : string;
 
-export interface BasicControl<T extends BasicControlTypes = BasicControlTypes>
-  extends DynamicFormControl<T> {
-  value: BasicControlValueType<T>;
-}
+export type NumberControl = BaseFormControl<'number', number, NumberValidators>;
+
+export type ColorControl = BaseFormControl<'color', string, Validators>;
 
 export interface SelectControlOption {
   id: string;
   name: string;
 }
+
 export type SelectVariantType = 'id' | 'option' | 'multi';
-export type SelectControlValueType<T extends SelectVariantType> = T extends 'id'
-  ? string
-  : T extends 'option'
-    ? SelectControlOption
-    : SelectControlOption;
-export interface SelectControl extends DynamicFormControl<'select'> {
-  value: string | SelectControlOption | SelectControlOption[];
-  options: SelectControlOption[]; // for select, radio, chips
-  variant: 'id' | 'option' | 'multi';
+
+export interface SelectControl extends BaseFormControl<'select', any, Validators> {
+  options: SelectControlOption[];
+  variant: SelectVariantType;
 }
 
-type AllBasicControls = {
-  [K in BasicControlTypes]: BasicControl<K>;
-}[BasicControlTypes];
+export type IFormControl = TextControl | NumberControl | SelectControl | ColorControl;
 
-export type IFormControl = AllBasicControls | SelectControl;
 
 type TextControlType = 'text' | 'email' | 'password' | 'url';
 type NumberControlType = 'number';
@@ -183,22 +176,28 @@ type SelectControlType = 'select';
 
 // Type predicate for text controls
 export const isText = (
-  control: IFormControl,
-): control is IFormControl & { type: TextControlType } => {
-  const types: TextControlType[] = ['text', 'email', 'password', 'url'];
-  return types.includes(control.type as TextControlType);
+  control: any,
+): control is TextControl => {
+  const types: string[] = ['text', 'textarea', 'email', 'password', 'url', 'tel', 'search'];
+  return types.includes(control.type);
 };
 
 // Type predicate for number controls
 export const isNumber = (
-  control: IFormControl,
-): control is IFormControl & { type: NumberControlType } => {
+  control: any,
+): control is NumberControl => {
   return control.type === 'number';
 };
 
 // Type predicate for select controls
 export const isSelect = (
-  control: IFormControl,
-): control is IFormControl & { type: SelectControlType } => {
+  control: any,
+): control is SelectControl => {
   return control.type === 'select';
+};
+
+export const isColor = (
+  control: any,
+): control is ColorControl => {
+  return control.type === 'color';
 };

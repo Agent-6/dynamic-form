@@ -2,23 +2,27 @@
   <form class="w-full">
     <h2 class="text-gray-950 text-xl font-extrabold mb-3">Generated Dynamic Form</h2>
     @for (control of controls(); track control.id) {
-    @let label = control.label || 'Enter a label for this field';
-    @let placeholder = control.placeholder;
 
     <div class="w-full mb-3">
-      @if (isText(control))
-      {
-      <ui-input [label]="label" [placeholder]="placeholder" [formField]="getField(control)"
+      <ng-container
+        [ngTemplateOutlet]="fieldTemplate() || defaultTemplate"
+        [ngTemplateOutletContext]="{ $implicit: control, field: getField(control) }"
+      />
+    </div>
+
+    <ng-template #defaultTemplate let-control let-field="field">
+      @if (isText(control)) {
+      <ui-input [label]="control.label || ''" [placeholder]="control.placeholder" [formField]="field"
         [type]="control.type"></ui-input>
       }
-      @if (isNumber(control)) {
-      <ui-number [label]="label" [placeholder]="placeholder" [formField]="getField(control)"></ui-number>
+      @else if (isNumber(control)) {
+      <ui-number [label]="control.label || ''" [placeholder]="control.placeholder" [formField]="field"></ui-number>
       }
-      @if (isSelect(control)) {
-      <ui-select [label]="label" [placeholder]="placeholder" [formField]="getField(control)"
+      @else if (isSelect(control)) {
+      <ui-select [label]="control.label || ''" [placeholder]="control.placeholder" [formField]="field"
         [options]="control.options"></ui-select>
       }
-    </div>
+    </ng-template>
     }
 
     <div class="w-full flex my-3">

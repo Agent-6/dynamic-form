@@ -9,6 +9,7 @@ import { DynamicFormBuilderComponent } from './components/dynamic-form/builder/d
 import { DynamicFormService } from './components/dynamic-form/builder/dynamic-form-builder.service';
 import type { IFormControl } from './components/dynamic-form/dynamic-form.model';
 import { DynamicFormComponent } from './components/dynamic-form/form/dynamic-form';
+import { FormFieldRendererComponent } from './components/dynamic-form/form-field-renderer';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ import { DynamicFormComponent } from './components/dynamic-form/form/dynamic-for
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [DynamicFormComponent, DynamicFormBuilderComponent],
+  imports: [DynamicFormComponent, DynamicFormBuilderComponent, FormFieldRendererComponent],
   providers: [DynamicFormService],
 })
 export class App {

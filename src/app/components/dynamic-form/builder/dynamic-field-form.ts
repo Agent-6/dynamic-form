@@ -29,16 +29,20 @@ import {
 import { InputComponent } from '../../ui/input/input.component';
 import { NumberComponent } from '../../ui/number/number.component';
 import { SelectComponent } from '../../ui/select/select.component';
+import { ColorPickerComponent } from '../../ui/color-picker/color-picker.component';
 import {
   applyTypeValidators,
-  type FormControlType,
+  type BaseFormControl,
   type IFormControl,
   initValidatorsByType,
   isNumber,
   isSelect,
   isText,
+  isColor,
+  type NumberControl,
   type SelectControl,
   type SelectControlOption,
+  type TextControl,
 } from '../dynamic-form.model';
 import { DynamicFormService } from './dynamic-form-builder.service';
 
@@ -47,7 +51,7 @@ import { DynamicFormService } from './dynamic-form-builder.service';
   templateUrl: './dynamic-field-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [InputComponent, NumberComponent, SelectComponent, FormField],
+  imports: [InputComponent, NumberComponent, SelectComponent, FormField, ColorPickerComponent],
 })
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
@@ -62,6 +66,7 @@ export class DynamicFormFieldComponent {
   isText = isText;
   isNumber = isNumber;
   isSelect = isSelect;
+  isColor = isColor;
 
   protected readonly control = linkedSignal<IFormControl>(() => {
     const control = this.service.controls().find((c) => c.id === this.controlId());
@@ -144,13 +149,14 @@ export class DynamicFormFieldComponent {
     });
   }
 
-  readonly typeOptions = signal<{ id: FormControlType; name: string }[]>([
+  readonly typeOptions = signal<{ id: string; name: string }[]>([
     { id: 'text', name: 'Text' },
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },
     { id: 'email', name: 'Email' },
     { id: 'password', name: 'Password' },
     { id: 'url', name: 'URL' },
+    { id: 'color', name: 'Color' },
   ]);
 
   constructor() {

@@ -29,7 +29,7 @@
 
     <!-- select options -->
     @if (selectOptionsForm(); as optionsForm) {
-    <div class="w-full">
+    <div class="w-full mb-3">
       <div class="mb-3">
         <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Options</label>
       </div>
@@ -72,19 +72,22 @@
       <ui-input [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)" [type]="fieldControl.type"></ui-input>
       }
-      @if (isNumber(fieldControl)) {
+      @else if (isNumber(fieldControl)) {
       <ui-number [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)"></ui-number>
       }
-      @if (isSelect(fieldControl) && fieldControl.options) {
+      @else if (isSelect(fieldControl) && fieldControl.options) {
       <ui-select [label]="'Default Value'" [placeholder]="'Enter a default value'"
         [formField]="getValueField(fieldControl)" [options]="fieldControl.options" />
+      }
+      @else if (isColor(fieldControl)) {
+      <ui-color-picker [label]="'Default Value'" [formField]="getValueField(fieldControl)"></ui-color-picker>
       }
     </div>
 
     @if (!form.validators) {
-    <div class="w-full">
-      <div>Validators</div>
+    <div class="w-full mb-3">
+      <div class="mb-3">Validators</div>
       <button type="button"
         class="ms-auto p-2 text-white font-semibold bg-black hover:bg-gray-900 focus:bg-gray-900 rounded-sm"
         (click)="initValidators()">Init Validators</button>
