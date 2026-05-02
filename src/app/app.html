@@ -5,11 +5,7 @@
         <app-dynamic-form-builder />
       </div>
       <div class="w-1/2">
-        <app-dynamic-form [controls]="controls()">
-          <ng-template #fieldTemplate let-control let-field="field">
-            <app-form-field-renderer [control]="control" [field]="field" />
-          </ng-template>
-        </app-dynamic-form>
+        <app-dynamic-form [controls]="controls()" />
       </div>
     </div>
   </div>

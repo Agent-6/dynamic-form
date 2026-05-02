@@ -7,9 +7,7 @@ import {
 } from '@angular/core';
 import { DynamicFormBuilderComponent } from './components/dynamic-form/builder/dynamic-form-builder';
 import { DynamicFormService } from './components/dynamic-form/builder/dynamic-form-builder.service';
-import type { IFormControl } from './components/dynamic-form/dynamic-form.model';
 import { DynamicFormComponent } from './components/dynamic-form/form/dynamic-form';
-import { FormFieldRendererComponent } from './components/dynamic-form/form-field-renderer';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +15,7 @@ import { FormFieldRendererComponent } from './components/dynamic-form/form-field
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [DynamicFormComponent, DynamicFormBuilderComponent, FormFieldRendererComponent],
+  imports: [DynamicFormComponent, DynamicFormBuilderComponent],
   providers: [DynamicFormService],
 })
 export class App {
