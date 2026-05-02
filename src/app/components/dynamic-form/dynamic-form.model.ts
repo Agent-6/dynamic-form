@@ -43,14 +43,32 @@ export interface ControlTypeDefinition<TType extends string, TValue, TValidators
   readonly validators?: TValidators;
 }
 
-export type TextControlDef = ControlTypeDefinition<
-  'text' | 'email' | 'url' | 'textarea' | 'password' | 'tel' | 'search' | 'richtext',
-  string,
-  TextValidators
->;
+/**
+ * Source of truth for control type strings.
+ */
+export const TEXT_CONTROL_TYPES = [
+  'text',
+  'textarea',
+  'email',
+  'password',
+  'url',
+  'tel',
+  'search',
+  'richtext',
+] as const;
+export type TextControlType = (typeof TEXT_CONTROL_TYPES)[number];
 
-export type NumberControlDef = ControlTypeDefinition<'number', number, NumberValidators>;
-export type SelectControlDef = ControlTypeDefinition<'select', string | string[] | SelectControlOption | SelectControlOption[], Validators> & {
+export const NUMBER_CONTROL_TYPES = ['number'] as const;
+export type NumberControlType = (typeof NUMBER_CONTROL_TYPES)[number];
+
+export const SELECT_CONTROL_TYPES = ['select'] as const;
+export type SelectControlType = (typeof SELECT_CONTROL_TYPES)[number];
+
+export type TextControlDef = ControlTypeDefinition<TextControlType, string, TextValidators>;
+
+export type NumberControlDef = ControlTypeDefinition<NumberControlType, number, NumberValidators>;
+
+export type SelectControlDef = ControlTypeDefinition<SelectControlType, string | string[] | SelectControlOption | SelectControlOption[], Validators> & {
   options: SelectControlOption[];
   variant: SelectVariantType;
   multi: boolean;
@@ -159,11 +177,8 @@ export function initValidatorsByType(type: IFormControl['type']): Validators {
     disabled: false,
     readonly: false,
   };
-
-  const textTypes: string[] = ['text', 'textarea', 'email', 'password', 'url', 'tel', 'search', 'date', 'time', 'datetime', 'month', 'week', 'richtext'];
-  const numberTypes: string[] = ['number', 'slider', 'range'];
-
-  if (textTypes.includes(type)) {
+  
+  if ((TEXT_CONTROL_TYPES as readonly string[]).includes(type)) {
     return {
       ...baseValidators,
       minLength: undefined,
@@ -172,7 +187,7 @@ export function initValidatorsByType(type: IFormControl['type']): Validators {
     } as TextValidators;
   }
 
-  if (numberTypes.includes(type)) {
+  if ((NUMBER_CONTROL_TYPES as readonly string[]).includes(type)) {
     return {
       ...baseValidators,
       min: undefined,

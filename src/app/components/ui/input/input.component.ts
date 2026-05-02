@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
-import type { BasicControlTypes } from '../../dynamic-form/dynamic-form.model';
+import { TextControlType } from '../../dynamic-form/dynamic-form.model';
 import { FormFieldComponent } from '../form/form-field/form-field.component';
 import {
   FormFieldControl,
@@ -15,5 +15,5 @@ import {
   providers: [FormFieldStateService],
 })
 export class InputComponent extends FormFieldControl<string> {
-  public readonly type = input.required<Exclude<BasicControlTypes, 'number'>>();
+  public readonly type = input.required<TextControlType>();
 }

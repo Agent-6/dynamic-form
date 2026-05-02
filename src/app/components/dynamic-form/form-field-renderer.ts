@@ -7,6 +7,7 @@ import { ColorPickerComponent } from '../ui/color-picker/color-picker.component'
 import {
   type DiscriminatedField,
   isType,
+  TEXT_CONTROL_TYPES,
 } from './dynamic-form.model';
 
 @Component({
@@ -16,7 +17,7 @@ import {
   template: `
     @let d = data();
 
-    @if (isType(d, 'text', 'email', 'url', 'textarea', 'password', 'tel', 'search', 'richtext')) {
+    @if (isType(d, ...textTypes)) {
       <ui-input
         [label]="d.control.label || ''"
         [placeholder]="d.control.placeholder"
@@ -52,4 +53,5 @@ export class FormFieldRendererComponent {
   data = input.required<DiscriminatedField>();
 
   protected isType = isType;
+  protected textTypes = TEXT_CONTROL_TYPES;
 }
