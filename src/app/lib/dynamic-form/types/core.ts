@@ -9,6 +9,7 @@ export type FormControlType =
   | 'color'
   | 'date'
   | 'time'
+  | 'checkbox'
   ;
 
 export type Validators = {

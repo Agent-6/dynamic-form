@@ -21,4 +21,7 @@
 <ui-time [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
     [mode]="d.control.mode" [format]="d.control.format" [minTime]="d.control.validators?.min"
     [maxTime]="d.control.validators?.max" />
+} @else if (isType(d, 'checkbox')) {
+<ui-checkbox [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [variant]="d.control.variant" />
 }

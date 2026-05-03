@@ -110,6 +110,16 @@
     </div>
     }
 
+    <!-- checkbox config -->
+    @if (checkboxConfigForm(); as checkboxForm) {
+    <div class="w-full mb-3">
+      <ui-select [label]="'Style'" [formField]="checkboxForm.variant" [options]="[
+          { id: 'checkbox', name: 'Checkbox' },
+          { id: 'toggle', name: 'Toggle' }
+        ]" [variant]="'id'" />
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />
@@ -128,24 +138,20 @@
     <div class="w-full">
       <div>Validators</div>
 
-      <div>
-        <label class="me-2">Required</label>
-        <input type="checkbox" [formField]="form.validators.required!" />
+      <div class="w-full mb-3">
+        <ui-checkbox [label]="'Required'" [formField]="form.validators.required!" />
       </div>
 
-      <div>
-        <label class="me-2">Readonly</label>
-        <input type="checkbox" [formField]="form.validators.readonly!" />
+      <div class="w-full mb-3">
+        <ui-checkbox [label]="'Readonly'" [formField]="form.validators.readonly!" />
       </div>
 
-      <div>
-        <label class="me-2">Disabled</label>
-        <input type="checkbox" [formField]="form.validators.disabled!" />
+      <div class="w-full mb-3">
+        <ui-checkbox [label]="'Disabled'" [formField]="form.validators.disabled!" />
       </div>
 
-      <div>
-        <label class="me-2">Hidden</label>
-        <input type="checkbox" [formField]="form.validators.hidden!" />
+      <div class="w-full mb-3">
+        <ui-checkbox [label]="'Hidden'" [formField]="form.validators.hidden!" />
       </div>
 
       @if (dateConfigForm()?.validators; as dateValidators) {

@@ -35,8 +35,10 @@ import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls
 import { DateControl } from '@dynamic-form/types/controls/date';
 import { TimeControl } from '@dynamic-form/types/controls/time';
 import { TextareaControl } from '@dynamic-form/types/controls/textarea';
+import { CheckboxControl } from '@dynamic-form/types/controls/checkbox';
 import { DateComponent } from "@ui/date/date.component";
 import { TimeComponent } from "@ui/time/time.component";
+import { CheckboxComponent } from "@ui/checkbox/checkbox.component";
 import { timeValidator } from '@dynamic-form/types/validation';
 import { NumberComponent } from "@ui/number/number.component";
 
@@ -53,6 +55,7 @@ import { NumberComponent } from "@ui/number/number.component";
     DateComponent,
     TimeComponent,
     NumberComponent,
+    CheckboxComponent,
 ],
 })
 export class DynamicFormFieldComponent {
@@ -152,6 +155,12 @@ export class DynamicFormFieldComponent {
     return this.form as FieldTree<TextareaControl, string>;
   });
 
+  protected readonly checkboxConfigForm = computed(() => {
+    if (this.control().type !== 'checkbox') return null;
+
+    return this.form as FieldTree<CheckboxControl, string>;
+  });
+
   addOption() {
     const optionsForm = this.selectOptionsForm();
     if (!optionsForm) return;
@@ -186,6 +195,7 @@ export class DynamicFormFieldComponent {
     { id: 'color', name: 'Color' },
     { id: 'date', name: 'Date' },
     { id: 'time', name: 'Time' },
+    { id: 'checkbox', name: 'Checkbox' },
   ]);
 
   constructor() {
@@ -202,6 +212,9 @@ export class DynamicFormFieldComponent {
       }
       if (control.type === 'textarea' && !control.rows) {
         this.control.update((c) => ({ ...c, rows: 3 }) as TextareaControl);
+      }
+      if (control.type === 'checkbox' && (!control.variant || control.value === undefined)) {
+        this.control.update((c) => ({ ...c, variant: 'checkbox', value: false }) as CheckboxControl);
       }
     });
   }

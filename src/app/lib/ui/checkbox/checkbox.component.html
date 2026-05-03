@@ -1,0 +1,21 @@
+<ui-form-field>
+  <div class="flex items-center min-h-[40px]">
+    @if (variant() === 'checkbox') {
+    <input type="checkbox" [id]="name()" [checked]="value()" (change)="onToggle()" [disabled]="disabled()"
+      [readonly]="readonly()"
+      class="w-5 h-5 rounded-sm border-2 border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer disabled:opacity-50" />
+    <label [for]="name()" class="ms-2 text-sm text-gray-700 cursor-pointer select-none">{{ placeholder() }}</label>
+    } @else {
+    <button type="button" [id]="name()" (click)="onToggle()" [disabled]="disabled()" [attr.aria-checked]="value()"
+      role="switch"
+      class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:opacity-50"
+      [class.bg-blue-600]="value()" [class.bg-gray-200]="!value()">
+      <span aria-hidden="true"
+        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+        [class.translate-x-5]="value()" [class.translate-x-0]="!value()"></span>
+    </button>
+    <label [for]="name()" (click)="onToggle()"
+      class="ms-3 text-sm text-gray-700 cursor-pointer select-none">{{ placeholder() }}</label>
+    }
+  </div>
+</ui-form-field>

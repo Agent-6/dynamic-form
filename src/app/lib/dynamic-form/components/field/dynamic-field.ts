@@ -7,13 +7,14 @@ import { ColorPickerComponent } from '@ui/color-picker/color-picker.component';
 import { DateComponent } from '@ui/date/date.component';
 import { TimeComponent } from '@ui/time/time.component';
 import { TextareaComponent } from '@ui/textarea/textarea.component';
+import { CheckboxComponent } from '@ui/checkbox/checkbox.component';
 import { DiscriminatedField, isType } from '@dynamic-form/types/utils';
 
 @Component({
   selector: 'app-dynamic-field',
   templateUrl: 'dynamic-field.html',
   standalone: true,
-  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, TimeComponent, TextareaComponent, FormField],
+  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, TimeComponent, TextareaComponent, CheckboxComponent, FormField],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
