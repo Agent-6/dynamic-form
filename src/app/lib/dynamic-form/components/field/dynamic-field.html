@@ -27,4 +27,7 @@
 } @else if (isType(d, 'radio')) {
 <ui-radio [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
     [options]="d.control.options" />
+} @else if (isType(d, 'checkbox-group')) {
+<ui-checkbox-group [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [options]="d.control.options" [variant]="d.control.variant" />
 }

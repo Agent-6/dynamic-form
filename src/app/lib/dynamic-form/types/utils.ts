@@ -9,9 +9,10 @@ import { TimeControl } from './controls/time';
 import { TextareaControl } from './controls/textarea';
 import { CheckboxControl } from './controls/checkbox';
 import { RadioControl } from './controls/radio';
+import { CheckboxGroupControl } from './controls/checkbox-group';
 
 // Union of all controls
-export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl | TextareaControl | CheckboxControl | RadioControl;
+export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl | TextareaControl | CheckboxControl | RadioControl | CheckboxGroupControl;
 
 /**
  * A discriminated union that "links" a control to its corresponding field tree.

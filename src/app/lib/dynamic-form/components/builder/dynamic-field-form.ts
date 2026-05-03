@@ -37,10 +37,10 @@ import { TimeControl } from '@dynamic-form/types/controls/time';
 import { TextareaControl } from '@dynamic-form/types/controls/textarea';
 import { CheckboxControl } from '@dynamic-form/types/controls/checkbox';
 import { RadioControl } from '@dynamic-form/types/controls/radio';
+import { CheckboxGroupControl } from '@dynamic-form/types/controls/checkbox-group';
 import { DateComponent } from "@ui/date/date.component";
 import { TimeComponent } from "@ui/time/time.component";
 import { CheckboxComponent } from "@ui/checkbox/checkbox.component";
-import { RadioComponent } from "@ui/radio/radio.component";
 import { timeValidator } from '@dynamic-form/types/validation';
 import { NumberComponent } from "@ui/number/number.component";
 
@@ -58,7 +58,6 @@ import { NumberComponent } from "@ui/number/number.component";
     TimeComponent,
     NumberComponent,
     CheckboxComponent,
-    RadioComponent,
 ],
 })
 export class DynamicFormFieldComponent {
@@ -121,6 +120,15 @@ export class DynamicFormFieldComponent {
 
     applyWhen(
       control,
+      ({ value }) => value().type === 'checkbox-group',
+      (control) => {
+        const groupControl = control as SchemaPathTree<CheckboxGroupControl, PathKind.Root>;
+        apply(groupControl.options, this.optionsSchema);
+      },
+    );
+
+    applyWhen(
+      control,
       ({ value }) => value().type === 'date',
       (control) => {
         const dateControl = control as SchemaPathTree<DateControl, PathKind.Root>;
@@ -143,14 +151,18 @@ export class DynamicFormFieldComponent {
   });
 
   protected readonly selectOptionsForm = computed(() => {
-    if (this.control().type !== 'select' && this.control().type !== 'radio') return null;
+    const type = this.control().type;
+    if (type !== 'select' && type !== 'radio' && type !== 'checkbox-group') return null;
 
-    if (this.control().type === 'select') {
+    if (type === 'select') {
       const selectForm = this.form as FieldTree<SelectControl, string | number>;
       return selectForm.options;
-    } else {
+    } else if (type === 'radio') {
       const radioForm = this.form as FieldTree<RadioControl, string | number>;
       return radioForm.options;
+    } else {
+      const groupForm = this.form as FieldTree<CheckboxGroupControl, string | number>;
+      return groupForm.options;
     }
   });
 
@@ -173,9 +185,14 @@ export class DynamicFormFieldComponent {
   });
 
   protected readonly checkboxConfigForm = computed(() => {
-    if (this.control().type !== 'checkbox') return null;
+    const type = this.control().type;
+    if (type !== 'checkbox' && type !== 'checkbox-group') return null;
 
-    return this.form as FieldTree<CheckboxControl, string>;
+    if (type === 'checkbox') {
+      return this.form as FieldTree<CheckboxControl, string>;
+    } else {
+      return this.form as FieldTree<CheckboxGroupControl, string>;
+    }
   });
 
   addOption() {
@@ -214,6 +231,7 @@ export class DynamicFormFieldComponent {
     { id: 'time', name: 'Time' },
     { id: 'checkbox', name: 'Checkbox' },
     { id: 'radio', name: 'Radio' },
+    { id: 'checkbox-group', name: 'Checkbox Group' },
   ]);
 
   constructor() {
@@ -236,6 +254,9 @@ export class DynamicFormFieldComponent {
       }
       if (control.type === 'radio' && !control.options) {
         this.control.update((c) => ({ ...c, options: [] }) as RadioControl);
+      }
+      if (control.type === 'checkbox-group' && (!control.options || !control.variant || control.value === undefined)) {
+        this.control.update((c) => ({ ...c, options: [], variant: 'checkbox', value: [] }) as CheckboxGroupControl);
       }
     });
   }
