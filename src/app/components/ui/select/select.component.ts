@@ -12,7 +12,7 @@ import {
   NgpSelectOption,
   NgpSelectPortal,
 } from 'ng-primitives/select';
-import type { SelectControl, SelectControlOption } from '../../dynamic-form/dynamic-form.model';
+import type { SelectControl, SelectControlOption } from '../../../lib/dynamic-form/types/controls/select';
 import { FormFieldComponent } from '../form/form-field/form-field.component';
 import {
   FormFieldControl,
