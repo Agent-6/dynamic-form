@@ -32,5 +32,8 @@
     [options]="d.control.options" [variant]="d.control.variant" />
 } @else if (isType(d, 'range')) {
 <ui-range [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
-    [minVal]="d.control.min" [maxVal]="d.control.max" [step]="d.control.step || 1" [mode]="d.control.mode" />
+    [minVal]="d.control.min" [maxVal]="d.control.max" [step]="d.control.step!" [mode]="d.control.mode" />
+} @else if (isType(d, 'upload')) {
+<ui-upload [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [accept]="d.control.accept!" [maxSize]="d.control.maxSize!" />
 }

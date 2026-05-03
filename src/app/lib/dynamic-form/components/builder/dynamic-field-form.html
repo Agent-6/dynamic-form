@@ -141,6 +141,14 @@
     </div>
     }
 
+    <!-- upload config -->
+    @if (uploadConfigForm(); as uploadForm) {
+    <div class="w-full mb-3">
+      <ui-input [type]="'text'" [label]="'Allowed File Types (e.g. .pdf, image/*)'" [formField]="uploadForm.accept!" />
+      <ui-number [label]="'Max File Size (MB)'" [formField]="uploadForm.maxSize!" />
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />

@@ -39,6 +39,7 @@ import { CheckboxControl } from '@dynamic-form/types/controls/checkbox';
 import { RadioControl } from '@dynamic-form/types/controls/radio';
 import { CheckboxGroupControl } from '@dynamic-form/types/controls/checkbox-group';
 import { RangeControl } from '@dynamic-form/types/controls/range';
+import { UploadControl } from '@dynamic-form/types/controls/upload';
 import { DateComponent } from "@ui/date/date.component";
 import { TimeComponent } from "@ui/time/time.component";
 import { CheckboxComponent } from "@ui/checkbox/checkbox.component";
@@ -202,6 +203,12 @@ export class DynamicFormFieldComponent {
     return this.form as FieldTree<RangeControl, string>;
   });
 
+  protected readonly uploadConfigForm = computed(() => {
+    if (this.control().type !== 'upload') return null;
+
+    return this.form as FieldTree<UploadControl, string>;
+  });
+
   addOption() {
     const optionsForm = this.selectOptionsForm();
     if (!optionsForm) return;
@@ -240,6 +247,7 @@ export class DynamicFormFieldComponent {
     { id: 'radio', name: 'Radio' },
     { id: 'checkbox-group', name: 'Checkbox Group' },
     { id: 'range', name: 'Range' },
+    { id: 'upload', name: 'File Upload' },
   ]);
 
   constructor() {
@@ -278,6 +286,9 @@ export class DynamicFormFieldComponent {
       if (control.type === 'range' && control.mode === 'single' && typeof control.value !== 'number') {
         const val = (control.value as { from: number; to: number })?.from ?? 0;
         this.control.update((c) => ({ ...c, value: val }) as RangeControl);
+      }
+      if (control.type === 'upload' && (control.accept === undefined || control.maxSize === undefined)) {
+        this.control.update((c) => ({ ...c, accept: '', maxSize: 5 }) as UploadControl);
       }
     });
   }

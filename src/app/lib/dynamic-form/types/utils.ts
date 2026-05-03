@@ -11,9 +11,10 @@ import { CheckboxControl } from './controls/checkbox';
 import { RadioControl } from './controls/radio';
 import { CheckboxGroupControl } from './controls/checkbox-group';
 import { RangeControl } from './controls/range';
+import { UploadControl } from './controls/upload';
 
 // Union of all controls
-export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl | TextareaControl | CheckboxControl | RadioControl | CheckboxGroupControl | RangeControl;
+export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl | TextareaControl | CheckboxControl | RadioControl | CheckboxGroupControl | RangeControl | UploadControl;
 
 /**
  * A discriminated union that "links" a control to its corresponding field tree.
