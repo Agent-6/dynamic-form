@@ -29,10 +29,11 @@ import { InputComponent } from '@ui/input/input.component';
 import { SelectComponent } from '@ui/select/select.component';
 import { DynamicFormService } from './dynamic-form-builder.service';
 import { DynamicFieldComponent } from '../field/dynamic-field';
-import { applyTypeValidators, initValidatorsByType } from '@dynamic-form/types/validation';
+import { applyTypeValidators, dateValidator, initValidatorsByType } from '@dynamic-form/types/validation';
 import { DiscriminatedField, FormControl, isType } from '@dynamic-form/types/utils';
 import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls/select';
 import { DateControl } from '@dynamic-form/types/controls/date';
+import { DateComponent } from "@ui/date/date.component";
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -44,7 +45,8 @@ import { DateControl } from '@dynamic-form/types/controls/date';
     SelectComponent,
     FormField,
     DynamicFieldComponent,
-  ],
+    DateComponent,
+],
 })      
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
@@ -92,6 +94,16 @@ export class DynamicFormFieldComponent {
       (control) => {
         const selectControl = control as SchemaPathTree<SelectControl, PathKind.Root>;
         apply(selectControl.options, this.optionsSchema);
+      },
+    );
+
+    applyWhen(
+      control,
+      ({ value }) => value().type === 'date',
+      (control) => {
+        const dateControl = control as SchemaPathTree<DateControl, PathKind.Root>;
+        apply(dateControl.validators?.min!, (field) => dateValidator(field, () => this.control()))
+        apply(dateControl.validators?.max!, (field) => dateValidator(field, () => this.control()))
       },
     );
 

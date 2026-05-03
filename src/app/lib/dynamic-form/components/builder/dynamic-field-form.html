@@ -121,10 +121,12 @@
       @if (dateConfigForm()?.validators; as dateValidators) {
       <div class="w-full mt-3 flex gap-4">
         <div class="flex-1">
-          <ui-input [label]="'Min Date'" [formField]="dateValidators.min!" [type]="'text'" />
+          <ui-date [label]="'Min Date'" [formField]="dateValidators.min!" [depth]="dateConfigForm()?.depth()?.value()!"
+            [mode]="dateConfigForm()?.mode()?.value()!" />
         </div>
         <div class="flex-1">
-          <ui-input [label]="'Max Date'" [formField]="dateValidators.max!" [type]="'text'" />
+          <ui-date [label]="'Max Date'" [formField]="dateValidators.max!" [depth]="dateConfigForm()?.depth()?.value()!"
+            [mode]="dateConfigForm()?.mode()?.value()!" />
         </div>
       </div>
       }
