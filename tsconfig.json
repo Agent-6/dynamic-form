@@ -14,6 +14,11 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "@ui/*": ["src/app/lib/ui/*"],
+      "@dynamic-form/*": ["src/app/lib/dynamic-form/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

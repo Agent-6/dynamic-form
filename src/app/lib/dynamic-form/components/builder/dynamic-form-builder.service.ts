@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import type { FormControl } from '../../../lib/dynamic-form/types/utils';
+import type { FormControl } from '@dynamic-form/types/utils';
 
 @Injectable()
 export class DynamicFormService {

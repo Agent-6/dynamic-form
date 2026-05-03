@@ -21,8 +21,8 @@ import {
   submit,
 } from '@angular/forms/signals';
 import { DynamicFieldComponent } from '../field/dynamic-field';
-import { DiscriminatedField, FormControl } from '../../../lib/dynamic-form/types/utils';
-import { applyTypeValidators, getControlFormContext } from '../../../lib/dynamic-form/types/validation';
+import { DiscriminatedField, FormControl } from '@dynamic-form/types/utils';
+import { applyTypeValidators, getControlFormContext } from '@dynamic-form/types/validation';
 
 @Component({
   selector: 'app-dynamic-form',

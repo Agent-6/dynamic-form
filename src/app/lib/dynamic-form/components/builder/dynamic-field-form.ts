@@ -25,13 +25,13 @@ import {
   schema,
   submit,
 } from '@angular/forms/signals';
-import { InputComponent } from '../../ui/input/input.component';
-import { SelectComponent } from '../../ui/select/select.component';
+import { InputComponent } from '@ui/input/input.component';
+import { SelectComponent } from '@ui/select/select.component';
 import { DynamicFormService } from './dynamic-form-builder.service';
 import { DynamicFieldComponent } from '../field/dynamic-field';
-import { applyTypeValidators, initValidatorsByType } from '../../../lib/dynamic-form/types/validation';
-import { DiscriminatedField, FormControl } from '../../../lib/dynamic-form/types/utils';
-import { SelectControl, SelectControlOption } from '../../../lib/dynamic-form/types/controls/select';
+import { applyTypeValidators, initValidatorsByType } from '@dynamic-form/types/validation';
+import { DiscriminatedField, FormControl } from '@dynamic-form/types/utils';
+import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls/select';
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -44,7 +44,7 @@ import { SelectControl, SelectControlOption } from '../../../lib/dynamic-form/ty
     FormField,
     DynamicFieldComponent,
   ],
-})
+})      
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
   public readonly controlId = input.required<string | undefined>();

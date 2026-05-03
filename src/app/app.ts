@@ -5,9 +5,9 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import { DynamicFormBuilderComponent } from './components/dynamic-form/builder/dynamic-form-builder';
-import { DynamicFormService } from './components/dynamic-form/builder/dynamic-form-builder.service';
-import { DynamicFormComponent } from './components/dynamic-form/form/dynamic-form';
+import { DynamicFormBuilderComponent } from '@dynamic-form/components/builder/dynamic-form-builder';
+import { DynamicFormService } from '@dynamic-form/components/builder/dynamic-form-builder.service';
+import { DynamicFormComponent } from '@dynamic-form/components/form/dynamic-form';
 
 @Component({
   selector: 'app-root',

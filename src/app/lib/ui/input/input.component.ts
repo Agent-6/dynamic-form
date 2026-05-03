@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
-import type { TextControlType } from '../../../lib/dynamic-form/types/controls/text';
+import type { TextControlType } from '@dynamic-form/types/controls/text';
 import { FormFieldComponent } from '../form/form-field/form-field.component';
 import {
   FormFieldControl,
