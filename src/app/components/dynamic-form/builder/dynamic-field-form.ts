@@ -24,20 +24,14 @@ import {
   type SchemaPathTree,
   schema,
   submit,
-  validate,
 } from '@angular/forms/signals';
 import { InputComponent } from '../../ui/input/input.component';
 import { SelectComponent } from '../../ui/select/select.component';
-import {
-  applyTypeValidators,
-  type DiscriminatedField,
-  type IFormControl,
-  initValidatorsByType,
-  type SelectControl,
-  type SelectControlOption,
-} from '../dynamic-form.model';
 import { DynamicFormService } from './dynamic-form-builder.service';
-import { FormFieldRendererComponent } from '../form-field-renderer';
+import { DynamicFieldComponent } from '../field/dynamic-field';
+import { applyTypeValidators, initValidatorsByType } from '../../../lib/dynamic-form/types/validation';
+import { DiscriminatedField, FormControl } from '../../../lib/dynamic-form/types/utils';
+import { SelectControl, SelectControlOption } from '../../../lib/dynamic-form/types/controls/select';
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -48,7 +42,7 @@ import { FormFieldRendererComponent } from '../form-field-renderer';
     InputComponent,
     SelectComponent,
     FormField,
-    FormFieldRendererComponent,
+    DynamicFieldComponent,
   ],
 })
 export class DynamicFormFieldComponent {
@@ -61,12 +55,12 @@ export class DynamicFormFieldComponent {
     this.controlId() ? 'edit' : 'create',
   );
 
-  protected readonly control = linkedSignal<IFormControl>(() => {
+  protected readonly control = linkedSignal<FormControl>(() => {
     const control = this.service.controls().find((c) => c.id === this.controlId());
     return (
       control || ({
         id: crypto.randomUUID(),
-        name: '',
+        key: '',
         type: 'text',
         value: '',
         label: '',
@@ -85,20 +79,9 @@ export class DynamicFormFieldComponent {
     });
   });
 
-  url(field: SchemaPathTree<string>, options?: { message: string }) {
-    validate(field, ({ value }) => {
-      try {
-        new URL(value());
-        return null;
-      } catch {
-        return { kind: 'url', message: options?.message || 'URL format is not correct' };
-      }
-    });
-  }
-
   protected readonly form = form(this.control, (control) => {
     required(control.type, { message: 'field is required' });
-    required(control.name, { message: 'field is required' });
+    required(control.key, { message: 'field is required' });
 
     applyWhen(
       control,
@@ -142,7 +125,7 @@ export class DynamicFormFieldComponent {
     });
   }
 
-  readonly typeOptions = signal<{ id: IFormControl['type']; name: string }[]>([
+  readonly typeOptions = signal<{ id: FormControl['type']; name: string }[]>([
     { id: 'text', name: 'Text' },
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },
@@ -156,12 +139,12 @@ export class DynamicFormFieldComponent {
     effect(() => {
       const control = this.control();
       if (control.type === 'select' && !control.options) {
-        this.control.update((c) => ({ ...c, options: [] }) as IFormControl);
+        this.control.update((c) => ({ ...c, options: [] }) as FormControl);
       }
     });
   }
 
-  getFieldData<T extends IFormControl>(control: T): DiscriminatedField {
+  getFieldData<T extends FormControl>(control: T): DiscriminatedField {
     return {
       control: { ...control, label: 'Default Value', placeholder: 'Enter a default value' },
       field: this.form.value as FieldTree<T['value'], string>,
@@ -177,7 +160,7 @@ export class DynamicFormFieldComponent {
 
   submit() {
     submit(this.form, async (form) => {
-      const control: IFormControl = form().value();
+      const control: FormControl = form().value() as FormControl;
 
       try {
         this.mode() === 'create'
@@ -188,9 +171,9 @@ export class DynamicFormFieldComponent {
       } catch {
         return [
           {
-            fieldTree: this.form.name,
+            fieldTree: this.form.key,
             kind: 'NotUnique',
-            message: 'Duplicate name',
+            message: 'Duplicate key',
           },
         ];
       }

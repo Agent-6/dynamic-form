@@ -1,25 +1,25 @@
 import { Injectable, signal } from '@angular/core';
-import type { IFormControl } from '../dynamic-form.model';
+import type { FormControl } from '../../../lib/dynamic-form/types/utils';
 
 @Injectable()
 export class DynamicFormService {
-  private readonly _controls = signal<IFormControl[]>([]);
+  private readonly _controls = signal<FormControl[]>([]);
   public readonly controls = this._controls.asReadonly();
 
-  init(controls: IFormControl[]) {
+  init(controls: FormControl[]) {
     this._controls.set(controls);
   }
 
-  addControl(control: IFormControl) {
+  addControl(control: FormControl) {
     if (this._controls().some((c) => c.id === control.id)) {
       throw new Error(`A control with the id ${control.id} already exists`);
     }
 
     const notUnique = this._controls().some(
-      (c) => c.name.toLocaleLowerCase() === control.name.toLocaleLowerCase(),
+      (c) => c.key.toLocaleLowerCase() === control.key.toLocaleLowerCase(),
     );
     if (notUnique) {
-      throw new Error(`A control with the name ${control.name} already exists`);
+      throw new Error(`A control with the name ${control.key} already exists`);
     }
 
     this._controls.update((controls) => [...controls, control]);
@@ -29,7 +29,7 @@ export class DynamicFormService {
     this._controls.update((controls) => controls.filter((control) => control.id !== id));
   }
 
-  updateControl(id: string, updatedControl: Partial<IFormControl>) {
+  updateControl(id: string, updatedControl: Partial<FormControl>) {
     const controls = this._controls();
     const control = controls.find((control) => control.id === id);
     if (!control) {
@@ -37,8 +37,8 @@ export class DynamicFormService {
     }
 
     const rest = controls.filter((control) => control.id !== id);
-    if (updatedControl.name && rest.some((c) => c.name === updatedControl.name)) {
-      throw new Error(`A control with the name ${updatedControl.name} already exists`);
+    if (updatedControl.key && rest.some((c) => c.key === updatedControl.key)) {
+      throw new Error(`A control with the name ${updatedControl.key} already exists`);
     }
 
     this._controls.update(() => {
@@ -47,7 +47,7 @@ export class DynamicFormService {
         {
           ...control,
           ...updatedControl,
-        } as IFormControl,
+        } as FormControl,
       ];
     });
   }

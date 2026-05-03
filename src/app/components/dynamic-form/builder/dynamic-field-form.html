@@ -20,7 +20,7 @@
     </div>
 
     <div class="w-full mb-3">
-      <ui-input [label]="'Name'" [placeholder]="'Test'" [formField]="form.name" [type]="'text'" />
+      <ui-input [label]="'Key'" [placeholder]="'Test'" [formField]="form.key" [type]="'text'" />
     </div>
 
     <div class="w-full mb-3">
@@ -68,7 +68,7 @@
 
     <!-- Default Value form field -->
     <div class="w-full mb-3">
-      <app-form-field-renderer [data]="getFieldData(fieldControl)" />
+      <app-dynamic-field [data]="getFieldData(fieldControl)" />
     </div>
 
     @if (!form.validators) {
