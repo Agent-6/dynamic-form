@@ -10,13 +10,14 @@ import { TextareaComponent } from '@ui/textarea/textarea.component';
 import { CheckboxComponent } from '@ui/checkbox/checkbox.component';
 import { RadioComponent } from '@ui/radio/radio.component';
 import { CheckboxGroupComponent } from '@ui/checkbox-group/checkbox-group.component';
+import { RangeComponent } from '@ui/range/range.component';
 import { DiscriminatedField, isType } from '@dynamic-form/types/utils';
 
 @Component({
   selector: 'app-dynamic-field',
   templateUrl: 'dynamic-field.html',
   standalone: true,
-  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, TimeComponent, TextareaComponent, CheckboxComponent, RadioComponent, CheckboxGroupComponent, FormField],
+  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, TimeComponent, TextareaComponent, CheckboxComponent, RadioComponent, CheckboxGroupComponent, RangeComponent, FormField],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })

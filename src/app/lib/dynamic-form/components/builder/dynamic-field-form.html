@@ -120,6 +120,27 @@
     </div>
     }
 
+    <!-- range config -->
+    @if (rangeConfigForm(); as rangeForm) {
+    <div class="w-full mb-3 flex gap-4">
+      <div class="flex-1">
+        <ui-select [label]="'Mode'" [formField]="rangeForm.mode" [options]="[
+            { id: 'single', name: 'Single' },
+            { id: 'range', name: 'Range' }
+          ]" [variant]="'id'" />
+      </div>
+      <div class="flex-1">
+        <ui-number [label]="'Min'" [formField]="rangeForm.min" />
+      </div>
+      <div class="flex-1">
+        <ui-number [label]="'Max'" [formField]="rangeForm.max" />
+      </div>
+      <div class="flex-1">
+        <ui-number [label]="'Step'" [formField]="rangeForm.step!" />
+      </div>
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />

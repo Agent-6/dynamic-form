@@ -1,0 +1,89 @@
+<ui-form-field>
+  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-1 pt-4">
+    <div class="relative w-full h-10 flex items-center">
+      <!-- Custom track background with highlight -->
+      <div class="absolute w-full h-1.5 bg-gray-200 rounded-lg overflow-hidden">
+        <div class="absolute h-full bg-blue-600 transition-[left,right]"
+             [style.left.%]="mode() === 'single' ? 0 : fromPercent"
+             [style.right.%]="mode() === 'single' ? 100 - fromPercent : 100 - toPercent">
+        </div>
+      </div>
+
+      @if (mode() === 'single') {
+        <input type="range" class="slider-input absolute w-full !pointer-events-auto"
+               [id]="name()" [min]="minVal()" [max]="maxVal()" [step]="step()" [value]="from"
+               (input)="onSingleChange($any($event.target).valueAsNumber)"
+               [disabled]="disabled()" [readonly]="readonly()" />
+      } @else {
+        <input type="range" class="slider-input absolute w-full z-[1]"
+               [class.!z-[10]]="from > (maxVal() - minVal()) / 2"
+               [id]="name() + '_from'" [min]="minVal()" [max]="maxVal()" [step]="step()" [value]="from"
+               (input)="onFromChange($any($event.target).valueAsNumber)"
+               [disabled]="disabled()" [readonly]="readonly()" />
+        <input type="range" class="slider-input absolute w-full z-[1]"
+               [id]="name() + '_to'" [min]="minVal()" [max]="maxVal()" [step]="step()" [value]="to"
+               (input)="onToChange($any($event.target).valueAsNumber)"
+               [disabled]="disabled()" [readonly]="readonly()" />
+      }
+    </div>
+
+    <!-- Labels -->
+    <div class="flex justify-between items-center text-[10px] uppercase tracking-wider font-semibold text-gray-400 px-1">
+      <span>{{ minVal() }}</span>
+      <div class="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-100 font-bold text-xs transform -translate-y-1">
+        @if (mode() === 'single') {
+          {{ from }}
+        } @else {
+          {{ from }} - {{ to }}
+        }
+      </div>
+      <span>{{ maxVal() }}</span>
+    </div>
+  </div>
+
+  <style>
+    .slider-input {
+      appearance: none;
+      background: transparent;
+      outline: none;
+      margin: 0;
+      pointer-events: none; /* Let clicks pass through to the slider below */
+    }
+    .slider-input::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 2px solid #2563eb;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.1s, border-color 0.1s;
+      pointer-events: auto; /* Thumbs remain clickable */
+    }
+    .slider-input::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        border-color: #1d4ed8;
+    }
+    .slider-input::-webkit-slider-runnable-track {
+        background: transparent;
+        border: none;
+    }
+    /* Firefox support */
+    .slider-input::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 2px solid #2563eb;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      pointer-events: auto;
+    }
+    .slider-input::-moz-range-track {
+        background: transparent;
+    }
+  </style>
+  </div>
+</ui-form-field>

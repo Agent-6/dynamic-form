@@ -38,6 +38,7 @@ import { TextareaControl } from '@dynamic-form/types/controls/textarea';
 import { CheckboxControl } from '@dynamic-form/types/controls/checkbox';
 import { RadioControl } from '@dynamic-form/types/controls/radio';
 import { CheckboxGroupControl } from '@dynamic-form/types/controls/checkbox-group';
+import { RangeControl } from '@dynamic-form/types/controls/range';
 import { DateComponent } from "@ui/date/date.component";
 import { TimeComponent } from "@ui/time/time.component";
 import { CheckboxComponent } from "@ui/checkbox/checkbox.component";
@@ -195,6 +196,12 @@ export class DynamicFormFieldComponent {
     }
   });
 
+  protected readonly rangeConfigForm = computed(() => {
+    if (this.control().type !== 'range') return null;
+
+    return this.form as FieldTree<RangeControl, string>;
+  });
+
   addOption() {
     const optionsForm = this.selectOptionsForm();
     if (!optionsForm) return;
@@ -232,6 +239,7 @@ export class DynamicFormFieldComponent {
     { id: 'checkbox', name: 'Checkbox' },
     { id: 'radio', name: 'Radio' },
     { id: 'checkbox-group', name: 'Checkbox Group' },
+    { id: 'range', name: 'Range' },
   ]);
 
   constructor() {
@@ -257,6 +265,19 @@ export class DynamicFormFieldComponent {
       }
       if (control.type === 'checkbox-group' && (!control.options || !control.variant || control.value === undefined)) {
         this.control.update((c) => ({ ...c, options: [], variant: 'checkbox', value: [] }) as CheckboxGroupControl);
+      }
+      if (control.type === 'range' && (control.min === undefined || control.max === undefined || !control.mode)) {
+        this.control.update((c) => ({ ...c, min: 0, max: 100, step: 1, mode: 'single', value: 0 }) as RangeControl);
+      }
+
+      // Handle value shape transition when mode changes for range
+      if (control.type === 'range' && control.mode === 'range' && typeof control.value === 'number') {
+        const val = control.value;
+        this.control.update((c) => ({ ...c, value: { from: val, to: control.max } }) as RangeControl);
+      }
+      if (control.type === 'range' && control.mode === 'single' && typeof control.value !== 'number') {
+        const val = (control.value as { from: number; to: number })?.from ?? 0;
+        this.control.update((c) => ({ ...c, value: val }) as RangeControl);
       }
     });
   }
