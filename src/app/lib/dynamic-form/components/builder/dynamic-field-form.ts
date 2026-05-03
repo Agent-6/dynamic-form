@@ -34,9 +34,11 @@ import { DiscriminatedField, FormControl, isType } from '@dynamic-form/types/uti
 import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls/select';
 import { DateControl } from '@dynamic-form/types/controls/date';
 import { TimeControl } from '@dynamic-form/types/controls/time';
+import { TextareaControl } from '@dynamic-form/types/controls/textarea';
 import { DateComponent } from "@ui/date/date.component";
 import { TimeComponent } from "@ui/time/time.component";
 import { timeValidator } from '@dynamic-form/types/validation';
+import { NumberComponent } from "@ui/number/number.component";
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -50,6 +52,7 @@ import { timeValidator } from '@dynamic-form/types/validation';
     DynamicFieldComponent,
     DateComponent,
     TimeComponent,
+    NumberComponent,
 ],
 })
 export class DynamicFormFieldComponent {
@@ -143,6 +146,12 @@ export class DynamicFormFieldComponent {
     return this.form as FieldTree<TimeControl, string>;
   });
 
+  protected readonly textareaConfigForm = computed(() => {
+    if (this.control().type !== 'textarea') return null;
+
+    return this.form as FieldTree<TextareaControl, string>;
+  });
+
   addOption() {
     const optionsForm = this.selectOptionsForm();
     if (!optionsForm) return;
@@ -168,6 +177,7 @@ export class DynamicFormFieldComponent {
 
   readonly typeOptions = signal<{ id: FormControl['type']; name: string }[]>([
     { id: 'text', name: 'Text' },
+    { id: 'textarea', name: 'Textarea' },
     { id: 'number', name: 'Number' },
     { id: 'select', name: 'Select' },
     { id: 'email', name: 'Email' },
@@ -189,6 +199,9 @@ export class DynamicFormFieldComponent {
       }
       if (control.type === 'time' && (!control.format || !control.mode)) {
         this.control.update((c) => ({ ...c, format: '24h', mode: 'single' }) as TimeControl);
+      }
+      if (control.type === 'textarea' && !control.rows) {
+        this.control.update((c) => ({ ...c, rows: 3 }) as TextareaControl);
       }
     });
   }

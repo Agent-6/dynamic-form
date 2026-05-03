@@ -6,9 +6,10 @@ import { NumberControl } from './controls/number';
 import { ColorControl } from './controls/color';
 import { DateControl } from './controls/date';
 import { TimeControl } from './controls/time';
+import { TextareaControl } from './controls/textarea';
 
 // Union of all controls
-export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl;
+export type FormControl = SelectControl | TextControl | NumberControl | ColorControl | DateControl | TimeControl | TextareaControl;
 
 /**
  * A discriminated union that "links" a control to its corresponding field tree.

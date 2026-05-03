@@ -3,6 +3,9 @@
 @if (isType(d, ...textTypes)) {
 <ui-input [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
     [type]="d.control.type" />
+} @else if (isType(d, 'textarea')) {
+<ui-textarea [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [rows]="d.control.rows!" />
 } @else if (isType(d, 'number')) {
 <ui-number [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field" />
 } @else if (isType(d, 'select')) {

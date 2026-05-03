@@ -1,5 +1,6 @@
 export type FormControlType =
   | 'text'
+  | 'textarea'
   | 'email'
   | 'url'
   | 'password'

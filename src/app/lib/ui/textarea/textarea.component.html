@@ -1,0 +1,14 @@
+<ui-form-field>
+  <textarea
+    class="w-full rounded-sm border-2 border-gray-200 p-2 focus:border-blue-500 focus:outline-none transition-colors"
+    [id]="name()"
+    [rows]="rows()"
+    [value]="value() || ''"
+    (input)="value.set($any($event.target).value)"
+    [placeholder]="placeholder() || ''"
+    (blur)="touched.set(true)"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [class.bg-gray-100]="disabled()"
+  ></textarea>
+</ui-form-field>

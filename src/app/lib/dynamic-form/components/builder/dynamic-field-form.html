@@ -103,6 +103,13 @@
     </div>
     }
 
+    <!-- textarea config -->
+    @if (textareaConfigForm(); as textareaForm) {
+    <div class="w-full mb-3">
+      <ui-number [label]="'Rows'" [formField]="textareaForm.rows!" />
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />
