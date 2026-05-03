@@ -85,6 +85,24 @@
     </div>
     }
 
+    <!-- time config -->
+    @if (timeConfigForm(); as timeConfigForm) {
+    <div class="w-full mb-3 flex gap-4">
+      <div class="flex-1 text-sm">
+        <ui-select [label]="'Format'" [formField]="timeConfigForm.format" [options]="[
+            { id: '12h', name: '12h' },
+            { id: '24h', name: '24h' }
+          ]" [variant]="'id'" />
+      </div>
+      <div class="flex-1 text-sm">
+        <ui-select [label]="'Mode'" [formField]="timeConfigForm.mode" [options]="[
+            { id: 'single', name: 'Single' },
+            { id: 'range', name: 'Range' }
+          ]" [variant]="'id'" />
+      </div>
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />
@@ -118,6 +136,11 @@
         <input type="checkbox" [formField]="form.validators.disabled!" />
       </div>
 
+      <div>
+        <label class="me-2">Hidden</label>
+        <input type="checkbox" [formField]="form.validators.hidden!" />
+      </div>
+
       @if (dateConfigForm()?.validators; as dateValidators) {
       <div class="w-full mt-3 flex gap-4">
         <div class="flex-1">
@@ -127,6 +150,19 @@
         <div class="flex-1">
           <ui-date [label]="'Max Date'" [formField]="dateValidators.max!" [depth]="dateConfigForm()?.depth()?.value()!"
             [mode]="dateConfigForm()?.mode()?.value()!" />
+        </div>
+      </div>
+      }
+
+      @if (timeConfigForm()?.validators; as timeValidators) {
+      <div class="w-full mt-3 flex gap-4">
+        <div class="flex-1">
+          <ui-time [label]="'Min Time'" [formField]="timeValidators.min!"
+            [format]="timeConfigForm()?.format()?.value()!" [mode]="timeConfigForm()?.mode()?.value()!" />
+        </div>
+        <div class="flex-1">
+          <ui-time [label]="'Max Time'" [formField]="timeValidators.max!"
+            [format]="timeConfigForm()?.format()?.value()!" [mode]="timeConfigForm()?.mode()?.value()!" />
         </div>
       </div>
       }

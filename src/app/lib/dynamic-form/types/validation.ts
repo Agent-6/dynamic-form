@@ -1,8 +1,8 @@
-
 import { applyWhen, email, RootFieldContext, SchemaPath, SchemaPathTree, validate } from "@angular/forms/signals";
 import { Validators } from "./core";
 import { FormControl } from "./utils";
 import { DateControl, DateControlValue } from "./controls/date";
+import { TimeControl, TimeControlValue } from "./controls/time";
 
 /**
  * Default type-specific validators defined as standalone functions.
@@ -70,6 +70,34 @@ export const dateValidator = (field: SchemaPathTree<DateControlValue>, getContro
   });
 };
 
+export const timeValidator = (field: SchemaPathTree<TimeControlValue>, getControl: getControlFormContext) => {
+  validate(field, (ctx) => {
+    const control = getControl(ctx) as TimeControl;
+    const value = ctx.value();
+    if (!value) return null;
+
+    // 1. Min/Max Validation
+    const min = control.validators?.min;
+    const max = control.validators?.max;
+    const checkMinMax = (t: string) => {
+      if (!t) return null;
+      if (min && t < min) return { kind: 'minTime', message: `Time must be after ${min}` };
+      if (max && t > max) return { kind: 'maxTime', message: `Time must be before ${max}` };
+      return null;
+    };
+
+    const minMaxError = Array.isArray(value) ? checkMinMax(value[0]) || checkMinMax(value[1]) : checkMinMax(value as string);
+    if (minMaxError) return minMaxError;
+
+    // 2. Range Validation (To > From)
+    if (control.mode === 'range' && Array.isArray(value) && value[0] && value[1]) {
+      if (value[1] < value[0]) return { kind: 'timeRange', message: '"To" time must be after "From" time' };
+    }
+
+    return null;
+  });
+};
+
 export type getControlFormContext = (
   ctx: RootFieldContext<FormControl['value']>,
 ) => FormControl | undefined;
@@ -103,6 +131,15 @@ export const applyTypeValidators = (
       dateValidator(field, getControl);
     }
   );
+
+  // Time validation (Range and Min/Max)
+  applyWhen<TimeControlValue>(
+    path as SchemaPath<TimeControlValue>,
+    (ctx) => getControl(ctx)?.type === 'time',
+    (field) => {
+      timeValidator(field, getControl);
+    }
+  );
 };
 
 const baseValidators: Validators = {
@@ -123,6 +160,14 @@ export function initValidatorsByType<TFormControl extends FormControl>(type: TFo
   }
 
   if (type === 'date') {
+    return {
+      ...baseValidators,
+      min: '',
+      max: '',
+    };
+  }
+
+  if (type === 'time') {
     return {
       ...baseValidators,
       min: '',

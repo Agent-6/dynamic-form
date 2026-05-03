@@ -33,7 +33,10 @@ import { applyTypeValidators, dateValidator, initValidatorsByType } from '@dynam
 import { DiscriminatedField, FormControl, isType } from '@dynamic-form/types/utils';
 import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls/select';
 import { DateControl } from '@dynamic-form/types/controls/date';
+import { TimeControl } from '@dynamic-form/types/controls/time';
 import { DateComponent } from "@ui/date/date.component";
+import { TimeComponent } from "@ui/time/time.component";
+import { timeValidator } from '@dynamic-form/types/validation';
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -46,8 +49,9 @@ import { DateComponent } from "@ui/date/date.component";
     FormField,
     DynamicFieldComponent,
     DateComponent,
+    TimeComponent,
 ],
-})      
+})
 export class DynamicFormFieldComponent {
   public readonly show = model.required<boolean>();
   public readonly controlId = input.required<string | undefined>();
@@ -107,6 +111,16 @@ export class DynamicFormFieldComponent {
       },
     );
 
+    applyWhen(
+      control,
+      ({ value }) => value().type === 'time',
+      (control) => {
+        const timeControl = control as SchemaPathTree<TimeControl, PathKind.Root>;
+        apply(timeControl.validators?.min!, (field) => timeValidator(field, () => this.control()))
+        apply(timeControl.validators?.max!, (field) => timeValidator(field, () => this.control()))
+      },
+    );
+ 
     applyTypeValidators(control.value, () => this.control());
   });
 
@@ -121,6 +135,12 @@ export class DynamicFormFieldComponent {
     if (this.control().type !== 'date') return null;
 
     return this.form as FieldTree<DateControl, string>;
+  });
+
+  protected readonly timeConfigForm = computed(() => {
+    if (this.control().type !== 'time') return null;
+
+    return this.form as FieldTree<TimeControl, string>;
   });
 
   addOption() {
@@ -155,6 +175,7 @@ export class DynamicFormFieldComponent {
     { id: 'url', name: 'URL' },
     { id: 'color', name: 'Color' },
     { id: 'date', name: 'Date' },
+    { id: 'time', name: 'Time' },
   ]);
 
   constructor() {
@@ -165,6 +186,9 @@ export class DynamicFormFieldComponent {
       }
       if (control.type === 'date' && (!control.depth || !control.mode)) {
         this.control.update((c) => ({ ...c, depth: 'day', mode: 'single' }) as DateControl);
+      }
+      if (control.type === 'time' && (!control.format || !control.mode)) {
+        this.control.update((c) => ({ ...c, format: '24h', mode: 'single' }) as TimeControl);
       }
     });
   }

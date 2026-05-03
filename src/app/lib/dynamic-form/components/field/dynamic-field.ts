@@ -5,13 +5,14 @@ import { NumberComponent } from '@ui/number/number.component';
 import { SelectComponent } from '@ui/select/select.component';
 import { ColorPickerComponent } from '@ui/color-picker/color-picker.component';
 import { DateComponent } from '@ui/date/date.component';
+import { TimeComponent } from '@ui/time/time.component';
 import { DiscriminatedField, isType } from '@dynamic-form/types/utils';
 
 @Component({
   selector: 'app-dynamic-field',
   templateUrl: 'dynamic-field.html',
   standalone: true,
-  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, FormField],
+  imports: [InputComponent, NumberComponent, SelectComponent, ColorPickerComponent, DateComponent, TimeComponent, FormField],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })

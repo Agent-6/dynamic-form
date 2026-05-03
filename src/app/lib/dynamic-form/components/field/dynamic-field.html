@@ -14,4 +14,8 @@
 <ui-date [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
     [depth]="d.control.depth" [mode]="d.control.mode" [minDate]="d.control.validators?.min"
     [maxDate]="d.control.validators?.max" />
+} @else if (isType(d, 'time')) {
+<ui-time [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [mode]="d.control.mode" [format]="d.control.format" [minTime]="d.control.validators?.min"
+    [maxTime]="d.control.validators?.max" />
 }
