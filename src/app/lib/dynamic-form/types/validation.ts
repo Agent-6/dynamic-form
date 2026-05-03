@@ -2,6 +2,7 @@
 import { applyWhen, email, RootFieldContext, SchemaPath, SchemaPathTree, validate } from "@angular/forms/signals";
 import { Validators } from "./core";
 import { FormControl } from "./utils";
+import { DateControl, DateControlValue } from "./controls/date";
 
 /**
  * Default type-specific validators defined as standalone functions.
@@ -48,6 +49,56 @@ export const applyTypeValidators = (
     (ctx) => getControl(ctx)?.type === 'url' && !!ctx.value(),
     urlValidator
   );
+
+  // Date validation (Range, Year, and Min/Max)
+  applyWhen<DateControlValue>(
+    path as SchemaPath<DateControlValue>,
+    (ctx) => getControl(ctx)?.type === 'date',
+    (field) => {
+      validate(field, (ctx) => {
+        const control = getControl(ctx) as DateControl;
+        const value = ctx.value();
+        if (!value) return null;
+
+        // 1. Min/Max Validation
+        const min = control.validators?.min;
+        const max = control.validators?.max;
+        const checkMinMax = (d: string) => {
+          if (!d) return null;
+          if (min && new Date(d) < new Date(min)) return { kind: 'minDate', message: `Date must be after ${min}` };
+          if (max && new Date(d) > new Date(max)) return { kind: 'maxDate', message: `Date must be before ${max}` };
+          return null;
+        };
+
+        const minMaxError = Array.isArray(value) ? checkMinMax(value[0]) || checkMinMax(value[1]) : checkMinMax(value as string);
+        if (minMaxError) return minMaxError;
+
+        // 2. Range Validation
+        if (control.mode === 'range' && Array.isArray(value) && value[0] && value[1]) {
+          const from = new Date(value[0]);
+          const to = new Date(value[1]);
+          if (to < from) return { kind: 'dateRange', message: '"To" date must be after "From" date' };
+        }
+
+        // 3. Year Depth Validation
+        if (control.depth === 'year') {
+          const checkYear = (s: string) => {
+            if (!s) return null;
+            const year = parseInt(s, 10);
+            const minYear = 1900;
+            const maxYear = new Date().getFullYear();
+            if (isNaN(year) || s.length !== 4) return { kind: 'yearFormat', message: 'Year must be 4 digits' };
+            if (year < minYear || year > maxYear) return { kind: 'yearRange', message: `Year must be between ${minYear} and ${maxYear}` };
+            return null;
+          };
+          const yearError = Array.isArray(value) ? checkYear(value[0]) || checkYear(value[1]) : checkYear(value as string);
+          if (yearError) return yearError;
+        }
+
+        return null;
+      });
+    }
+  );
 };
 
 const baseValidators: Validators = {
@@ -64,7 +115,14 @@ export function initValidatorsByType<TFormControl extends FormControl>(type: TFo
       minLength: undefined,
       maxLength: undefined,
       pattern: undefined,
-      step: undefined,
+    };
+  }
+
+  if (type === 'date') {
+    return {
+      ...baseValidators,
+      min: '',
+      max: '',
     };
   }
 

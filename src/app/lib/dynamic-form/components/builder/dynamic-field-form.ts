@@ -30,8 +30,9 @@ import { SelectComponent } from '@ui/select/select.component';
 import { DynamicFormService } from './dynamic-form-builder.service';
 import { DynamicFieldComponent } from '../field/dynamic-field';
 import { applyTypeValidators, initValidatorsByType } from '@dynamic-form/types/validation';
-import { DiscriminatedField, FormControl } from '@dynamic-form/types/utils';
+import { DiscriminatedField, FormControl, isType } from '@dynamic-form/types/utils';
 import { SelectControl, SelectControlOption } from '@dynamic-form/types/controls/select';
+import { DateControl } from '@dynamic-form/types/controls/date';
 
 @Component({
   selector: 'app-dynamic-field-form',
@@ -51,6 +52,8 @@ export class DynamicFormFieldComponent {
 
   private readonly service = inject(DynamicFormService);
 
+  protected readonly isType = isType;
+  
   protected readonly mode = computed<'edit' | 'create'>(() =>
     this.controlId() ? 'edit' : 'create',
   );
@@ -102,6 +105,12 @@ export class DynamicFormFieldComponent {
     return selectForm.options;
   });
 
+  protected readonly dateConfigForm = computed(() => {
+    if (this.control().type !== 'date') return null;
+
+    return this.form as FieldTree<DateControl, string>;
+  });
+
   addOption() {
     const optionsForm = this.selectOptionsForm();
     if (!optionsForm) return;
@@ -133,6 +142,7 @@ export class DynamicFormFieldComponent {
     { id: 'password', name: 'Password' },
     { id: 'url', name: 'URL' },
     { id: 'color', name: 'Color' },
+    { id: 'date', name: 'Date' },
   ]);
 
   constructor() {
@@ -140,6 +150,9 @@ export class DynamicFormFieldComponent {
       const control = this.control();
       if (control.type === 'select' && !control.options) {
         this.control.update((c) => ({ ...c, options: [] }) as FormControl);
+      }
+      if (control.type === 'date' && (!control.depth || !control.mode)) {
+        this.control.update((c) => ({ ...c, depth: 'day', mode: 'single' }) as DateControl);
       }
     });
   }
@@ -155,7 +168,7 @@ export class DynamicFormFieldComponent {
     this.control.update((control) => ({
       ...control,
       validators: initValidatorsByType(control.type),
-    }));
+    }) as FormControl);
   }
 
   submit() {

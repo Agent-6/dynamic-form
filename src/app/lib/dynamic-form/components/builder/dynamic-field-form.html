@@ -66,6 +66,25 @@
     </div>
     }
 
+    <!-- date config -->
+    @if (dateConfigForm(); as dateConfigForm) {
+    <div class="w-full mb-3 flex gap-4">
+      <div class="flex-1 text-sm">
+        <ui-select [label]="'Depth'" [formField]="dateConfigForm.depth" [options]="[
+            { id: 'day', name: 'Day' },
+            { id: 'week', name: 'Week' },
+            { id: 'year', name: 'Year' }
+          ]" [variant]="'id'" />
+      </div>
+      <div class="flex-1 text-sm">
+        <ui-select [label]="'Mode'" [formField]="dateConfigForm.mode" [options]="[
+            { id: 'single', name: 'Single' },
+            { id: 'range', name: 'Range' }
+          ]" [variant]="'id'" />
+      </div>
+    </div>
+    }
+
     <!-- Default Value form field -->
     <div class="w-full mb-3">
       <app-dynamic-field [data]="getFieldData(fieldControl)" />
@@ -98,6 +117,17 @@
         <label class="me-2">Disabled</label>
         <input type="checkbox" [formField]="form.validators.disabled!" />
       </div>
+
+      @if (dateConfigForm()?.validators; as dateValidators) {
+      <div class="w-full mt-3 flex gap-4">
+        <div class="flex-1">
+          <ui-input [label]="'Min Date'" [formField]="dateValidators.min!" [type]="'text'" />
+        </div>
+        <div class="flex-1">
+          <ui-input [label]="'Max Date'" [formField]="dateValidators.max!" [type]="'text'" />
+        </div>
+      </div>
+      }
     </div>
     }
   </form>

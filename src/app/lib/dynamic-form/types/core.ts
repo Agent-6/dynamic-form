@@ -5,7 +5,9 @@ export type FormControlType =
   | 'password'
   | 'number'
   | 'select'
-  | 'color';
+  | 'color'
+  | 'date'
+  ;
 
 export type Validators = {
   required?: boolean;

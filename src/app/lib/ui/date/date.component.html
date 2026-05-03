@@ -1,0 +1,56 @@
+<ui-form-field>
+  <div class="flex flex-col gap-2">
+    @if (mode() === 'single') {
+      <input
+        class="w-full h-10 rounded-sm border-2 border-gray-200 p-2 focus:border-blue-500 focus:outline-none transition-colors"
+        [id]="name()"
+        [type]="getNativeType()"
+        [attr.min]="getMin()"
+        [attr.max]="getMax()"
+        [attr.inputmode]="depth() === 'year' ? 'numeric' : null"
+        [attr.maxlength]="depth() === 'year' ? 4 : null"
+        [value]="getSingleValue()"
+        (input)="onInput($event)"
+        [placeholder]="placeholder() || ''"
+        (blur)="touched.set(true)"
+        [disabled]="disabled()"
+        [readonly]="readonly()"
+        [class.bg-gray-100]="disabled()"
+      />
+    } @else {
+      <div class="flex items-center gap-2">
+        <input
+          class="flex-1 h-10 rounded-sm border-2 border-gray-200 p-2 focus:border-blue-500 focus:outline-none transition-colors"
+          [type]="getNativeType()"
+          [attr.min]="getMin()"
+          [attr.max]="getMax()"
+          [attr.inputmode]="depth() === 'year' ? 'numeric' : null"
+          [attr.maxlength]="depth() === 'year' ? 4 : null"
+          [value]="getRangeValue(0)"
+          (input)="onInput($event, 0)"
+          placeholder="Start date"
+          (blur)="touched.set(true)"
+          [disabled]="disabled()"
+          [readonly]="readonly()"
+          [class.bg-gray-100]="disabled()"
+        />
+        <span class="text-gray-400 flex-shrink-0">→</span>
+        <input
+          class="flex-1 h-10 rounded-sm border-2 border-gray-200 p-2 focus:border-blue-500 focus:outline-none transition-colors"
+          [type]="getNativeType()"
+          [attr.min]="getMin()"
+          [attr.max]="getMax()"
+          [attr.inputmode]="depth() === 'year' ? 'numeric' : null"
+          [attr.maxlength]="depth() === 'year' ? 4 : null"
+          [value]="getRangeValue(1)"
+          (input)="onInput($event, 1)"
+          placeholder="End date"
+          (blur)="touched.set(true)"
+          [disabled]="disabled()"
+          [readonly]="readonly()"
+          [class.bg-gray-100]="disabled()"
+        />
+      </div>
+    }
+  </div>
+</ui-form-field>

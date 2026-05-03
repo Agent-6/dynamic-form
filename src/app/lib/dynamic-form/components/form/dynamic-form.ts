@@ -14,6 +14,7 @@ import {
   disabled,
   type FieldTree,
   form,
+  hidden,
   type LogicFn,
   readonly,
   required,
@@ -36,6 +37,7 @@ export class DynamicFormComponent<TControl extends FormControl = FormControl> {
   readonly fieldTemplate = contentChild<TemplateRef<{ $implicit: TControl; field: FieldTree<any, any> }>>('fieldTemplate');
 
   readonly validatorsMap = computed(() => {
+    debugger
     const map: { [key: string]: any } = {};
     for (const control of this.controls()) {
       map[control.key] = control.validators;
@@ -48,6 +50,7 @@ export class DynamicFormComponent<TControl extends FormControl = FormControl> {
     selector: (validators: any) => T,
   ): LogicFn<any, T> {
     return ({ fieldTree }) => {
+      debugger
       const key = fieldTree().keyInParent() as string;
       const validators = this.validatorsMap()[key];
 
@@ -56,6 +59,7 @@ export class DynamicFormComponent<TControl extends FormControl = FormControl> {
   }
 
   getControl: getControlFormContext = ({ fieldTree }) => {
+    debugger
     const key = fieldTree().keyInParent() as string;
     const control = (this.controls() as FormControl[]).find((c) => c.key === key);
     return control;
@@ -75,6 +79,11 @@ export class DynamicFormComponent<TControl extends FormControl = FormControl> {
     readonly(
       controlValue,
       this.getValidator((validators) => !!validators?.readonly),
+    );
+
+    hidden(
+      controlValue,
+      this.getValidator((validators) => !!validators?.hidden),
     );
 
     applyTypeValidators(controlValue, this.getControl);
