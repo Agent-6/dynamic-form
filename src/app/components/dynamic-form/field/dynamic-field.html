@@ -1,0 +1,13 @@
+@let d = data();
+
+@if (isType(d, ...textTypes)) {
+<ui-input [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [type]="d.control.type" />
+} @else if (isType(d, 'number')) {
+<ui-number [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field" />
+} @else if (isType(d, 'select')) {
+<ui-select [label]="d.control.label || ''" [placeholder]="d.control.placeholder" [formField]="d.field"
+    [options]="d.control.options" [variant]="d.control.variant" [multi]="d.control.multi" />
+} @else if (isType(d, 'color')) {
+<ui-color-picker [label]="d.control.label || ''" [formField]="d.field" />
+}
